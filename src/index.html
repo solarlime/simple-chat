@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Items list</title>
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">
+            Items list
+        </h1>
+    </header>
+    <main>
+        <p class="title-container">
+            List
+            <span class="title-container-plus">+</span>
+        </p>
+        <div class="list">
+            <div class="list-item">
+                <span class="list-item-title">Name</span>
+                <div class="container">
+                    <span class="list-item-cost">Cost</span>
+                    <span class="list-item-actions">Actions</span>
+                </div>
+            </div>
+        </div>
+        <ul class="list">
+        </ul>
+    </main>
+    <div class="modal-container modal-add modal-update hidden">
+        <div class="modal">
+            <form id="add-and-update">
+                <label class="add">
+                    Name
+                    <input id="title" placeholder="Input the name">
+                </label>
+                <label class="update">
+                    Cost
+                    <input id="cost" placeholder="Input the cost">
+                </label>
+                <div class="button-container">
+                    <button class="save" type="button">Save</button>
+                    <button class="cancel" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-container modal-delete hidden">
+        <div class="modal">
+            <form id="delete">
+                <label>Do you want to remove this item?</label>
+                <div class="button-container">
+                    <button class="delete" type="button">Delete</button>
+                    <button class="cancel" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
