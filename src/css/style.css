@@ -51,13 +51,14 @@ div.list {
 .list-item-title {
     font-size: 1rem;
     display: inline-block;
+    width: 54%;
 }
 
 .container {
     font-size: 0;
     display: flex;
     align-items: center;
-    width: 50%;
+    width: 46%;
 }
 
 .list-item-cost {
