@@ -3,7 +3,11 @@ import App from "./app";
 import id from 'uniqid';
 
 export default class Modals {
-  static show(modal) {
+  static show(modal, row) {
+    if (row) {
+      document.getElementById('title').value = row.querySelector('.list-item-title').textContent;
+      document.getElementById('cost').value = row.querySelector('.list-item-cost').textContent;
+    }
     modal.classList.remove('hidden');
   }
 
@@ -35,6 +39,11 @@ export default class Modals {
   }
 
   static cancel() {
+    Modals.reset();
     Array.from(document.querySelectorAll('.modal-container')).find((modal) => !modal.classList.contains('hidden')).classList.add('hidden');
+  }
+
+  static reset() {
+    document.forms['add-and-update'].reset();
   }
 }

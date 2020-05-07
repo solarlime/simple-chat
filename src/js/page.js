@@ -37,12 +37,12 @@ export default class Page {
         return event.target.ownerSVGElement;
       };
       if (svg().classList.value === 'list-item-actions-update') {
-        Modals.show(this.modalUpdate);
         this.targetRow = svg().closest('li');
+        Modals.show(this.modalUpdate, this.targetRow);
       }
       if (svg().classList.value === 'list-item-actions-delete') {
-        Modals.show(this.modalDelete);
         this.targetRow = svg().closest('li');
+        Modals.show(this.modalDelete);
       }
     });
 
@@ -77,9 +77,5 @@ export default class Page {
       '                    </div>\n' +
       '                </div>';
     document.querySelector('ul.list').append(newRow);
-  }
-
-  static reset() {
-    document.forms['add-and-update'].reset();
   }
 }
