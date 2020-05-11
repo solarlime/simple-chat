@@ -110,7 +110,7 @@ ul.list .list-item-actions {
 }
 
 #add-and-update, #delete {
-    width: 80%
+    width: 80%;
 }
 
 label {
@@ -120,6 +120,12 @@ label {
     padding: 10px 0;
     margin: 0 auto;
     text-align: center;
+}
+
+.error {
+    display: block;
+    width: 100%;
+    font-size: 0.8rem;
 }
 
 .add {
@@ -133,7 +139,21 @@ label {
 #title, #cost {
     display: block;
     box-sizing: border-box;
-    width: 100%
+    width: 100%;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+#title:focus, #cost:focus {
+    border: 1px solid crimson;
+}
+
+#cost::-webkit-inner-spin-button, #cost::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+#cost {
+    -moz-appearance: textfield;
 }
 
 .button-container {
