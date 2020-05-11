@@ -13,6 +13,8 @@ export default class App {
   static update() {
     Modals.reset();
     document.querySelectorAll('li.list-item').forEach((item) => item.remove());
-    Storage.getItems().forEach((item) => Page.render(item));
+    if (Storage.getItems()) {
+      Storage.getItems().forEach((item) => Page.render(item));
+    }
   }
 }

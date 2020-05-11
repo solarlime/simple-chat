@@ -16,12 +16,15 @@ export default class Modals {
   static save(button, row) {
     const name = document.getElementById('title').value;
     const cost = document.getElementById('cost').value;
-    const data = Storage.getItems();
+    let data = Storage.getItems();
     if (row) {
       const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
       target.name = name;
       target.cost = cost;
     } else {
+      if (!data) {
+        data = [];
+      }
       data.push({ id: id(), name, cost });
     }
     Storage.setItems(data);
