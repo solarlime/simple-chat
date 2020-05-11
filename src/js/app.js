@@ -1,7 +1,7 @@
-/* eslint-disable class-methods-use-this */
-import Storage from "./storage";
-import Page from "./page";
-import Modals from "./modals";
+/* eslint-disable import/no-cycle */
+import Storage from './storage';
+import Page from './page';
+import Modals from './modals';
 
 export default class App {
   static init() {
