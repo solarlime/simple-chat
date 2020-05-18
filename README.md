@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/btmj7qgco9wkgjfn?svg=true)](https://ci.appveyor.com/project/solarlime/ahj-homework-5-2)
+[![Build status](https://ci.appveyor.com/api/projects/status/supiigrchv00snlr?svg=true)](https://ci.appveyor.com/project/solarlime/items-list)
 
 # Items list
 
