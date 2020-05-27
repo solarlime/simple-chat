@@ -14,7 +14,7 @@ export default class Modals {
   }
 
   static save(button, row) {
-    const name = document.getElementById('title').value;
+    const name = document.getElementById('title').value.trim();
     const cost = document.getElementById('cost').value;
     let data = Storage.getItems();
     if (row) {

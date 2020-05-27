@@ -1,6 +1,6 @@
 export default function validation(input) {
   const message = input.nextElementSibling;
-  if (!input.validity.valid || input.validity.rangeUnderflow) {
+  if (!input.validity.valid || input.validity.rangeUnderflow || !input.value.trim()) {
     if (input.id === 'title') {
       if (input.validity.valueMissing) {
         message.textContent = 'Enter the name, please.';
