@@ -1,11 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+:root {
+    --done-width: 30px;
+    --date-width: 100px;
+    --actions-width: 70px;
+}
+
 html {
-    font-family: "Ubuntu", Arial, sans-serif;
+    font-family: "Inter", Arial, sans-serif;
     font-size: 16px;
     word-wrap: break-word;
 }
 
 body {
-    min-width: 320px;
+    min-width: 500px;
     margin: 0;
 }
 
@@ -19,12 +27,14 @@ body {
 .title-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 80%;
     margin: 0 auto 10px auto;
 }
 
 .title-container-plus {
     cursor: pointer;
+    color: green;
 }
 
 .list {
@@ -40,7 +50,7 @@ div.list {
 }
 
 .list-item {
-    font-size: 0;
+    font-size: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -48,31 +58,32 @@ div.list {
     padding: 10px;
 }
 
-.list-item-title {
-    font-size: 1rem;
-    display: inline-block;
-    width: 54%;
-}
-
-.container {
-    font-size: 0;
+.list-item-done-container {
     display: flex;
     align-items: center;
-    width: 46%;
+    justify-content: flex-start;
+    width: var(--done-width);
 }
 
-.list-item-cost {
-    font-size: 1rem;
-    display: inline-block;
-    vertical-align: middle;
-    width: 50%;
+.list-item-done {
+    width: 20px;
+    height: 20px;
+}
+
+.list-item-title {
+    width: calc(100% - var(--done-width) - var(--date-width) - var(--date-width));
+}
+
+.list-item-date {
+    width: var(--date-width);
 }
 
 .list-item-actions {
     font-size: 1rem;
-    display: inline-block;
-    width: 50%;
-    text-align: right;
+    display: flex;
+    flex-wrap: nowrap;
+    width: var(--actions-width);
+    justify-content: flex-end;
 }
 
 ul.list .list-item-actions {
@@ -83,6 +94,15 @@ ul.list .list-item-actions {
     width: 20px;
     height: 20px;
     cursor: pointer;
+}
+
+.list-item-actions-update {
+    fill: green;
+    margin-right: 5px;
+}
+
+.list-item-actions-delete {
+    fill: crimson;
 }
 
 .modal-container {
