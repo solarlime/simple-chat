@@ -1,9 +1,9 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/supiigrchv00snlr?svg=true)](https://ci.appveyor.com/project/solarlime/items-list)
+![Vercel](https://vercelbadge.vercel.app/api/solarlime/help-desk)
 
-# Items list
+# Help desk
 
 ### What:
 
-It's a simple items list. You can add, update and delete items. All information is stored in your localStorage.
+It's a simple help desk. Uses a serverless function for a server logic & MongoDB for storing data.
 
-Try it on [GitHub Pages](https://solarlime.github.io/items-list/)!
+Try it on [Vercel](https://help-desk.solarlime.dev/)!
