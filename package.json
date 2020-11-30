@@ -1,5 +1,5 @@
 {
-  "name": "items-list",
+  "name": "help-desk",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solarlime/items-list.git"
+    "url": "git+https://github.com/solarlime/help-desk.git"
   },
   "author": "solarlime",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/solarlime/items-list/issues"
+    "url": "https://github.com/solarlime/help-desk/issues"
   },
-  "homepage": "https://github.com/solarlime/items-list#readme",
+  "homepage": "https://github.com/solarlime/help-desk#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
