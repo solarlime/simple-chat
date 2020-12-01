@@ -15,7 +15,7 @@ export default class Page {
     this.table = this.page.querySelector('ul.list');
     this.validity = {
       title: false,
-      cost: false,
+      description: false,
     };
     this.save.disabled = true;
   }
@@ -36,18 +36,19 @@ export default class Page {
 
     this.table.addEventListener('click', (event) => {
       // event.target - не всегда <svg>: иногда <path>. Поправляем
-      const svg = () => {
+      const resolveSVG = () => {
         if (!event.target.ownerSVGElement) {
           return event.target;
         }
         return event.target.ownerSVGElement;
       };
-      if (svg().classList.value === 'list-item-actions-update') {
-        this.targetRow = svg().closest('li');
+      const item = resolveSVG();
+      if (item.classList.value === 'list-item-actions-update') {
+        this.targetRow = item.closest('li');
         Modals.show.call(this, this.modalAddUpdate, this.targetRow);
       }
-      if (svg().classList.value === 'list-item-actions-delete') {
-        this.targetRow = svg().closest('li');
+      if (item.classList.value === 'list-item-actions-delete') {
+        this.targetRow = item.closest('li');
         Modals.show(this.modalDelete);
       }
     });

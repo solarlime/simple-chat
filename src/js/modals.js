@@ -7,25 +7,39 @@ export default class Modals {
   static show(modal, row) {
     if (row) {
       document.getElementById('title').value = row.querySelector('.list-item-title').textContent;
-      document.getElementById('cost').value = row.querySelector('.list-item-cost').textContent;
-      this.validity = { title: true, cost: true };
+      document.getElementById('description').value = row.querySelector('.list-item-description').textContent;
+      this.validity = { title: true, description: true };
     }
     modal.classList.remove('hidden');
   }
 
   static save(button, row) {
     const name = document.getElementById('title').value.trim();
-    const cost = document.getElementById('cost').value;
+    const description = document.getElementById('description').value.trim();
     let data = Storage.getItems();
     if (row) {
       const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
       target.name = name;
-      target.cost = cost;
+      target.description = description;
     } else {
       if (!data) {
         data = [];
       }
-      data.push({ id: id(), name, cost });
+      const resolveDate = (() => {
+        const now = new Date();
+        const options = {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          timezone: 'UTC',
+          hour: 'numeric',
+          minute: 'numeric',
+        };
+        return now.toLocaleString('ru', options);
+      });
+      data.push({
+        id: id(), done: false, name, description, date: resolveDate(),
+      });
     }
     Storage.setItems(data);
     App.update();
