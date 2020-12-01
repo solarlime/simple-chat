@@ -4,6 +4,7 @@
     --done-width: 30px;
     --date-width: 100px;
     --actions-width: 70px;
+    --done: 20px;
 }
 
 html {
@@ -45,8 +46,8 @@ body {
     border: 1px solid crimson;
 }
 
-.list:last-child {
-    border-top: 0;
+.list:first-child {
+    border-bottom: 0;
 }
 
 div.list {
@@ -66,16 +67,24 @@ div.list {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: var(--done-width);
+    width: var(--done);
+    height: var(--done);
+    padding-right: calc(var(--done-width) - var(--done));
 }
 
 .list-item-done {
-    width: 20px;
-    height: 20px;
+    width: var(--done);
+    height: var(--done);
 }
 
-.list-item-title {
+.list-item-ticket {
     width: calc(100% - var(--done-width) - var(--date-width) - var(--date-width));
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item-description {
+    color: darkgray;
 }
 
 .list-item-date {
