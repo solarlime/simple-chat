@@ -51,6 +51,9 @@ export default class Page {
         this.targetRow = item.closest('li');
         Modals.show(this.modalDelete);
       }
+      if (item.classList.value === 'list-item-done') {
+        Modals.quickSave(event.target);
+      }
     });
 
     this.form.querySelectorAll('input').forEach((input) => {
@@ -73,9 +76,22 @@ export default class Page {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'list-item');
     newRow.setAttribute('data-id', `${item.id}`);
-    // TODO: checking/unchecking
-    newRow.innerHTML = '<div class="list-item-done-container"><input type="checkbox" class="list-item-done"></div>\n'
-      + `                    <div class="list-item-title">${item.name}</div>\n`
+
+    const newDoneContainer = document.createElement('div');
+    newDoneContainer.setAttribute('class', 'list-item-done-container');
+
+    const newDone = document.createElement('input');
+    newDone.setAttribute('class', 'list-item-done');
+    newDone.setAttribute('type', 'checkbox');
+    newDone.checked = item.done;
+
+    newDoneContainer.append(newDone);
+    newRow.append(newDoneContainer);
+
+    newRow.insertAdjacentHTML('beforeend', '<div class="list-item-ticket">\n'
+      + `                        <div class="list-item-title">${item.name}</div>\n`
+      + `                        <div class="list-item-description">${item.description}</div>\n`
+      + '                    </div>\n'
       + `                    <div class="list-item-date">${item.date}</div>\n`
       + '                    <div class="list-item-actions">\n'
       + '                        <svg class="list-item-actions-update" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 469.336 469.336" xml:space="preserve">\n'
@@ -93,7 +109,7 @@ export default class Page {
       + '                            <path d="m120.566406 451.792969c.4375 7.996093 7.054688 14.183593 14.964844 14.183593.273438 0 .554688-.007812.832031-.023437 8.269531-.449219 14.609375-7.519531 14.160157-15.792969l-14.753907-270.398437c-.449219-8.273438-7.519531-14.613281-15.792969-14.160157-8.269531.449219-14.609374 7.519532-14.160156 15.792969zm0 0"></path>\n'
       + '                            <path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path>\n'
       + '                        </svg>\n'
-      + '                    </div>';
+      + '                    </div>');
     document.querySelector('ul.list').append(newRow);
   }
 }

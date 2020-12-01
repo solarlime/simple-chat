@@ -13,6 +13,15 @@ export default class Modals {
     modal.classList.remove('hidden');
   }
 
+  static quickSave(checkbox) {
+    const row = checkbox.closest('li');
+    const data = Storage.getItems();
+    const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
+    target.done = checkbox.checked;
+    Storage.setItems(data);
+    App.update();
+  }
+
   static save(button, row) {
     const name = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
