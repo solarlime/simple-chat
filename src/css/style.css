@@ -45,6 +45,10 @@ body {
     border: 1px solid crimson;
 }
 
+.list:last-child {
+    border-top: 0;
+}
+
 div.list {
     border-bottom: 0;
 }
@@ -156,7 +160,7 @@ label {
     text-align: left;
 }
 
-#title, #cost {
+#title, #description {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -164,15 +168,15 @@ label {
     border: 1px solid grey;
 }
 
-#title:focus, #cost:focus {
+#title:focus, #description:focus {
     border: 1px solid crimson;
 }
 
-#cost::-webkit-inner-spin-button, #cost::-webkit-outer-spin-button {
+#description::-webkit-inner-spin-button, #description::-webkit-outer-spin-button {
     -webkit-appearance: none;
 }
 
-#cost {
+#description {
     -moz-appearance: textfield;
 }
 
