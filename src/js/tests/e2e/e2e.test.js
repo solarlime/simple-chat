@@ -82,14 +82,11 @@ describe('E2E', () => {
       // Add
       const plus = await page.$('[class=title-container-plus]');
       plus.click();
-      await page.waitFor(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
       const name = await page.$('input[id=title]');
       await name.type('1');
       await name.press('Backspace');
-      await page.waitFor(() => !document.querySelector('.error-name').classList.contains('hidden'));
-      const cost = await page.$('input[id=cost]');
-      await cost.type('-1');
-      await page.waitFor(() => !document.querySelector('.error-cost').classList.contains('hidden'));
+      await page.waitForFunction(() => !document.querySelector('.error-name').classList.contains('hidden'));
       await page.waitFor(() => document.querySelector('.save').disabled);
     });
   });
