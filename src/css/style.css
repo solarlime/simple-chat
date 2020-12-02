@@ -203,3 +203,11 @@ label {
 .hidden {
     display: none;
 }
+
+.spoiler {
+    cursor: pointer;
+}
+
+.spoiler .list-item-title {
+    color: green;
+}

@@ -21,8 +21,13 @@ export default class Page {
   }
 
   /**
-   * Добавляем обработчик события на кнопку. В случае наличия
-   * подсказки удаляем её, иначе - отрисовываем.
+   * Обрабатываем следующие события:
+   * - Новая задача
+   * - Отмена действия и закрытие подсказки
+   * - Изменение задачи, удаление задачи, спойлер
+   * - Ввод данных и проверка
+   * - Подтверждение сохранения
+   * - Подтверждение удаления
    */
   addListeners() {
     this.plus.addEventListener('click', () => {
@@ -46,13 +51,18 @@ export default class Page {
       if (item.classList.value === 'list-item-actions-update') {
         this.targetRow = item.closest('li');
         Modals.show.call(this, this.modalAddUpdate, this.targetRow);
-      }
-      if (item.classList.value === 'list-item-actions-delete') {
+      } else if (item.classList.value === 'list-item-actions-delete') {
         this.targetRow = item.closest('li');
         Modals.show(this.modalDelete);
-      }
-      if (item.classList.value === 'list-item-done') {
+      } else if (item.classList.value === 'list-item-done') {
         Modals.quickSave(event.target);
+      } else {
+        const spoiler = document.elementsFromPoint(event.clientX, event.clientY)
+          .find((element) => element.classList.contains('spoiler'));
+        if (spoiler) {
+          spoiler.querySelector('.list-item-description').classList.toggle('hidden');
+          spoiler.querySelector('.list-item-description').classList.toggle('no-spoiler');
+        }
       }
     });
 
@@ -72,6 +82,9 @@ export default class Page {
     this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
   }
 
+  /**
+   * Функция отрисовки пунктов
+   */
   static render(item) {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'list-item');
@@ -110,6 +123,10 @@ export default class Page {
       + '                            <path d="m209.253906 465.976562c8.285156 0 15-6.714843 15-15v-270.398437c0-8.285156-6.714844-15-15-15s-15 6.714844-15 15v270.398437c0 8.285157 6.714844 15 15 15zm0 0"></path>\n'
       + '                        </svg>\n'
       + '                    </div>');
+    if (item.description) {
+      newRow.querySelector('.list-item-ticket').classList.add('spoiler');
+      newRow.querySelector('.list-item-description').classList.add('hidden');
+    }
     document.querySelector('ul.list').append(newRow);
   }
 }
