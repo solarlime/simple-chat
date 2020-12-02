@@ -38,39 +38,44 @@ describe('E2E', () => {
       // Add
       const plus = await page.$('[class=title-container-plus]');
       plus.click();
-      await page.waitFor(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
       const name = await page.$('input[id=title]');
-      await name.type('HTC HD2');
-      const cost = await page.$('input[id=cost]');
-      await cost.type('3000');
+      await name.type('A ticket title');
+      const description = await page.$('input[id=description]');
+      await description.type('A description for a ticket');
       const save = await page.$('button[class=save]');
       save.click();
-      await page.waitFor(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
-      await page.waitFor(() => (document.querySelector('li.list-item .list-item-title').textContent === 'HTC HD2')
-        && (document.querySelector('li.list-item .list-item-cost').textContent === '3000'));
+      await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(() => document.querySelector('li.list-item .list-item-title').textContent === 'A ticket title');
+      const ticket = await page.$('li[class=list-item] [class=list-item-title]');
+      ticket.click();
+      await page.waitForFunction(() => document.querySelector('li.list-item .list-item-description')
+        .textContent === 'A description for a ticket');
 
       // Update
       const update = await page.$('svg[class=list-item-actions-update]');
       update.click();
-      await page.waitFor(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
       await name.click({ clickCount: 3 });
-      await name.type('Motorola Moto Z');
-      await cost.click({ clickCount: 3 });
-      await cost.type('15000');
+      await name.type('Another ticket title');
+      await description.click({ clickCount: 3 });
+      await description.type('Another description for a ticket');
       save.click();
-      await page.waitFor(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
-      await page.waitFor(() => (document.querySelector('li.list-item .list-item-title').textContent === 'Motorola Moto Z')
-        && (document.querySelector('li.list-item .list-item-cost').textContent === '15000'));
+      await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      await page.waitForFunction(() => document.querySelector('li.list-item .list-item-title').textContent === 'Another ticket title');
+      const ticketNew = await page.$('li[class=list-item] [class=list-item-title]');
+      ticketNew.click();
+      await page.waitForFunction(() => document.querySelector('li.list-item .list-item-description')
+        .textContent === 'Another description for a ticket');
 
       // Delete
       const remove = await page.$('svg[class=list-item-actions-delete]');
       remove.click();
-      await page.waitFor(() => !document.querySelector('div.modal-delete').classList.contains('hidden'));
+      await page.waitForFunction(() => !document.querySelector('div.modal-delete').classList.contains('hidden'));
       const destroy = await page.$('button[class=delete]');
       destroy.click();
-      await page.waitFor(() => document.querySelector('div.modal-delete').classList.contains('hidden'));
-      await page.waitFor(() => !(document.querySelector('li.list-item .list-item-title'))
-        && !(document.querySelector('li.list-item .list-item-cost')));
+      await page.waitForFunction(() => document.querySelector('div.modal-delete').classList.contains('hidden'));
+      await page.waitForFunction(() => !(document.querySelector('li.list-item .list-item-title')));
     });
     test('Errors', async () => {
       await page.goto(url);
