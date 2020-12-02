@@ -13,6 +13,6 @@ export default function validation(input) {
     message.classList.remove('hidden');
     return false;
   }
-  message.classList.add('hidden');
+  // For a description
   return true;
 }
