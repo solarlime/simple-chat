@@ -66,7 +66,7 @@ export default class Modals {
 
   static cancel() {
     Modals.reset();
-    this.validity = { title: false, cost: false };
+    this.validity = { title: false, description: true };
     document.querySelector('button.save').disabled = true;
     document.querySelectorAll('.error').forEach((message) => message.classList.add('hidden'));
     Array.from(document.querySelectorAll('.modal-container')).find((modal) => !modal.classList.contains('hidden')).classList.add('hidden');
