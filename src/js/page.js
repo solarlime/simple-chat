@@ -15,7 +15,7 @@ export default class Page {
     this.table = this.page.querySelector('ul.list');
     this.validity = {
       title: false,
-      description: false,
+      description: true,
     };
     this.save.disabled = true;
   }
