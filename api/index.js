@@ -12,7 +12,7 @@ app.use(koaCors({ allowMethods: 'GET,PUT,POST,DELETE' }));
 app.use(koaBody({
   urlencoded: true,
   multipart: true,
-  strict: false,
+  parsedMethods: ['POST', 'PUT', 'DELETE', 'GET'],
 }));
 
 app.use(async (ctx) => {
@@ -53,7 +53,7 @@ app.use(async (ctx) => {
             await col.removeOne({ id: document.id });
             return { status: 'Removed', data: '' };
           default:
-            return { status: 'Added', data: await col.find().toArray() };
+            return { status: 'Fetched', data: await col.find().toArray() };
         }
       }
       throw TypeError('No action is mentioned');
