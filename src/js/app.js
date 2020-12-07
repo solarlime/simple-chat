@@ -1,20 +1,11 @@
-/* eslint-disable import/no-cycle */
-import Storage from './storage';
+/* eslint-disable import/no-cycle, no-unused-expressions */
+
 import Page from './page';
-import Modals from './modals';
 
 export default class App {
-  static init() {
+  static async init() {
     const page = new Page();
-    App.update();
+    await page.update(true);
     page.addListeners();
-  }
-
-  static update() {
-    Modals.reset();
-    document.querySelectorAll('li.list-item').forEach((item) => item.remove());
-    if (Storage.getItems()) {
-      Storage.getItems().forEach((item) => Page.render(item));
-    }
   }
 }
