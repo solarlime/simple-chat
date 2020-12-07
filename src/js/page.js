@@ -1,6 +1,7 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle, class-methods-use-this */
 import Modals from './modals';
 import validation from './validation';
+import Storage from './storage';
 
 export default class Page {
   constructor() {
@@ -8,16 +9,19 @@ export default class Page {
     this.plus = this.page.querySelector('.title-container-plus');
     this.modalAddUpdate = this.page.querySelector('.modal-add-update');
     this.modalDelete = this.page.querySelector('.modal-delete');
+    this.dancer = this.page.querySelector('.modal-dancer');
     this.form = this.page.querySelector('form#add-and-update');
     this.cancels = this.page.querySelectorAll('button.cancel');
     this.save = this.page.querySelector('button.save');
     this.delete = this.page.querySelector('button.delete');
+    this.error = this.page.querySelector('.error');
     this.table = this.page.querySelector('ul.list');
     this.validity = {
       title: false,
       description: true,
     };
     this.save.disabled = true;
+    this.list = null;
   }
 
   /**
@@ -36,10 +40,20 @@ export default class Page {
     });
 
     this.cancels.forEach((cancel) => {
-      cancel.addEventListener('click', () => Modals.cancel.call(this));
+      cancel.addEventListener('click', (event) => {
+        if (event.target.closest('.modal-container').classList.contains('modal-add-update')) {
+          Modals.cancel(this.modalAddUpdate);
+        }
+        if (event.target.closest('.modal-container').classList.contains('modal-delete')) {
+          Modals.cancel(this.modalDelete);
+        }
+        this.save.disabled = true;
+        this.validity = { title: false, description: true };
+        this.error.classList.add('hidden');
+      });
     });
 
-    this.table.addEventListener('click', (event) => {
+    this.table.addEventListener('click', async (event) => {
       // event.target - не всегда <svg>: иногда <path>. Поправляем
       const resolveSVG = () => {
         if (!event.target.ownerSVGElement) {
@@ -50,12 +64,13 @@ export default class Page {
       const item = resolveSVG();
       if (item.classList.value === 'list-item-actions-update') {
         this.targetRow = item.closest('li');
-        Modals.show.call(this, this.modalAddUpdate, this.targetRow);
+        this.validity = { title: false, description: true };
+        Modals.show(this.modalAddUpdate, this.targetRow);
       } else if (item.classList.value === 'list-item-actions-delete') {
         this.targetRow = item.closest('li');
         Modals.show(this.modalDelete);
       } else if (item.classList.value === 'list-item-done') {
-        Modals.quickSave(event.target);
+        await this.quickSave(event.target);
       } else {
         const spoiler = document.elementsFromPoint(event.clientX, event.clientY)
           .find((element) => element.classList.contains('spoiler'));
@@ -77,15 +92,42 @@ export default class Page {
       this.save.disabled = Object.values(this.validity).some((input) => input === false);
     });
 
-    this.save.addEventListener('click', (event) => Modals.save(event.target, this.targetRow));
+    this.save.addEventListener('click', async () => {
+      this.dancer.classList.remove('hidden');
+      await Modals.save(this.save, this.targetRow, this.modalAddUpdate, this.list.data);
+      await this.update();
+      this.dancer.classList.add('hidden');
+    });
 
-    this.delete.addEventListener('click', () => Modals.delete(this.targetRow));
+    this.delete.addEventListener('click', async () => {
+      this.dancer.classList.remove('hidden');
+      await Modals.delete(this.targetRow, this.modalDelete, this.list.data);
+      await this.update();
+      this.dancer.classList.add('hidden');
+    });
+  }
+
+  /**
+   * Функция изменения статуса готовности
+   */
+  async quickSave(checkbox) {
+    const row = checkbox.closest('li');
+    const target = this.list.data.find((item) => item.id.toString() === row.getAttribute('data-id'));
+    target.done = checkbox.checked;
+
+    // Sending a request
+    const formData = new FormData();
+    Object.entries({ id: row.getAttribute('data-id'), done: checkbox.checked })
+      .forEach((field) => formData.append(field[0], field[1]));
+    this.dancer.classList.remove('hidden');
+    await Storage.request('update', formData);
+    this.dancer.classList.add('hidden');
   }
 
   /**
    * Функция отрисовки пунктов
    */
-  static render(item) {
+  render(item) {
     const newRow = document.createElement('li');
     newRow.setAttribute('class', 'list-item');
     newRow.setAttribute('data-id', `${item.id}`);
@@ -128,5 +170,17 @@ export default class Page {
       newRow.querySelector('.list-item-description').classList.add('hidden');
     }
     document.querySelector('ul.list').append(newRow);
+  }
+
+  async update(full = false) {
+    document.querySelectorAll('li.list-item').forEach((item) => item.remove());
+    this.dancer.classList.remove('hidden');
+    if (full) {
+      this.list = await Storage.request('fetch');
+    }
+    if (this.list.data) {
+      this.list.data.forEach((item) => this.render(item));
+      this.dancer.classList.add('hidden');
+    }
   }
 }

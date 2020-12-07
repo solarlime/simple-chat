@@ -1,49 +1,41 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle, no-param-reassign */
 import id from 'uniqid';
 import Storage from './storage';
-import App from './app';
 
 export default class Modals {
   static show(modal, row) {
     if (row) {
-      document.getElementById('title').value = row.querySelector('.list-item-title').textContent;
-      document.getElementById('description').value = row.querySelector('.list-item-description').textContent;
+      modal.querySelector('#title').value = row.querySelector('.list-item-title').textContent;
+      modal.querySelector('#description').value = row.querySelector('.list-item-description').textContent;
       this.validity = { title: true, description: true };
     }
-    modal.classList.remove('hidden');
+    Modals.toggle(modal, true);
   }
 
-  static quickSave(checkbox) {
-    const row = checkbox.closest('li');
-    const data = Storage.getItems();
-    const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
-    target.done = checkbox.checked;
-    Storage.setItems(data);
-
-    // Sending a request
-    const formData = new FormData();
-    Object.entries({ id: row.getAttribute('data-id'), done: checkbox.checked })
-      .forEach((field) => formData.append(field[0], field[1]));
-    Storage.request('update', formData);
-    App.update();
+  static toggle(modal, status = false) {
+    if (status === true) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
   }
 
-  static save(button, row) {
-    const name = document.getElementById('title').value.trim();
-    const description = document.getElementById('description').value.trim();
-    let data = Storage.getItems();
+  static async save(button, row, modal, list) {
+    const name = modal.querySelector('#title').value.trim();
+    const description = modal.querySelector('#description').value.trim();
     const formData = new FormData();
     if (row) {
-      const target = data.find((item) => item.id.toString() === row.getAttribute('data-id'));
+      const target = list.find((item) => item.id.toString() === row.getAttribute('data-id'));
       target.name = name;
       target.description = description;
 
       // Sending a request
       Object.entries({ id: row.getAttribute('data-id'), name, description }).forEach((field) => formData.append(field[0], field[1]));
-      Storage.request('update', formData);
+      Modals.cancel(modal);
+      await Storage.request('update', formData);
     } else {
-      if (!data) {
-        data = [];
+      if (!list) {
+        list = [];
       }
       const resolveDate = (() => {
         const now = new Date();
@@ -60,35 +52,27 @@ export default class Modals {
       const newbie = {
         id: id(), done: false, name, description, date: resolveDate(),
       };
-      data.push(newbie);
+      list.push(newbie);
 
       // Sending a request
       Object.entries(newbie).forEach((field) => formData.append(field[0], field[1]));
-      Storage.request('new', formData);
+      Modals.cancel(modal);
+      await Storage.request('new', formData);
     }
-    Storage.setItems(data);
-    App.update();
-    Modals.cancel();
   }
 
-  static delete(row) {
+  static async delete(row, modal, list) {
     const formData = new FormData();
-    formData.append('id', row.getAttribute('data-id'));
-    Storage.request('delete', formData);
-    Storage.setItems(
-      // помещаем обратно в localStorage ту его часть, которая не совпадает по id с data-id
-      Storage.getItems().filter((item) => item.id.toString() !== row.getAttribute('data-id')),
-    );
-    App.update();
-    Modals.cancel();
+    const dataId = row.getAttribute('data-id');
+    formData.append('id', dataId);
+    list.splice(list.findIndex((item) => item.id === dataId), 1);
+    Modals.cancel(modal);
+    await Storage.request('delete', formData);
   }
 
-  static cancel() {
+  static cancel(modal) {
     Modals.reset();
-    this.validity = { title: false, description: true };
-    document.querySelector('button.save').disabled = true;
-    document.querySelectorAll('.error').forEach((message) => message.classList.add('hidden'));
-    Array.from(document.querySelectorAll('.modal-container')).find((modal) => !modal.classList.contains('hidden')).classList.add('hidden');
+    Modals.toggle(modal);
   }
 
   static reset() {
