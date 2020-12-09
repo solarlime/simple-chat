@@ -57,7 +57,7 @@ describe('E2E', () => {
       await page.waitForFunction(() => !document.querySelector('div.modal-add-update').classList.contains('hidden'));
       const name = await page.$('input[id=title]');
       await name.type('A ticket title');
-      const description = await page.$('input[id=description]');
+      const description = await page.$('textarea[id=description]');
       await description.type('A description for a ticket');
       const save = await page.$('button[class=save]');
       save.click();
