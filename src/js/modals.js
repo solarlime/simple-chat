@@ -3,6 +3,12 @@ import id from 'uniqid';
 import Storage from './storage';
 
 export default class Modals {
+  /**
+   * Функция открытия модального окна
+   *
+   * @param modal: нужное модальное окно
+   * @param row (опционально): строка таблицы с пунктом, который необходимо изменить
+   */
   static show(modal, row) {
     if (row) {
       modal.querySelector('#title').value = row.querySelector('.list-item-title').textContent;
@@ -12,6 +18,12 @@ export default class Modals {
     Modals.toggle(modal, true);
   }
 
+  /**
+   * Служебная функция для показа / скрытия модального окна
+   *
+   * @param modal: нужное модальное окно
+   * @param status: true - показать окно, false - скрыть окно
+   */
   static toggle(modal, status = false) {
     if (status === true) {
       modal.classList.remove('hidden');
@@ -20,6 +32,15 @@ export default class Modals {
     }
   }
 
+  /**
+   * Функция обработки нажатия на кнопку сохранения
+   *
+   * @param button: кнопка сохранения
+   * @param row (если есть): строка таблицы с пунктом, который необходимо изменить
+   * @param modal: нужное модальное окно (подразумевается .modal-add-update)
+   * @param list: массив данных для изменения
+   * @returns {Promise<void>}
+   */
   static async save(button, row, modal, list) {
     const name = modal.querySelector('#title').value.trim();
     const description = modal.querySelector('#description').value.trim();
@@ -61,6 +82,14 @@ export default class Modals {
     }
   }
 
+  /**
+   * Функция обработки нажатия на кнопку удаления
+   *
+   * @param row: строка таблицы с пунктом, который необходимо удалить
+   * @param modal: нужное модальное окно (подразумевается .modal-delete)
+   * @param list: массив данных для изменения
+   * @returns {Promise<void>}
+   */
   static async delete(row, modal, list) {
     const formData = new FormData();
     const dataId = row.getAttribute('data-id');
@@ -70,11 +99,19 @@ export default class Modals {
     await Storage.request('delete', formData);
   }
 
+  /**
+   * Функция-обёртка для закрытия модального окна
+   *
+   * @param modal: нужное модальное окно
+   */
   static cancel(modal) {
     Modals.reset();
     Modals.toggle(modal);
   }
 
+  /**
+   * Функция-обёртка для сброса данных формы
+   */
   static reset() {
     document.forms['add-and-update'].reset();
   }
