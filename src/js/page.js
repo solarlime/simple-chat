@@ -138,9 +138,14 @@ export default class Page {
     const newDone = document.createElement('input');
     newDone.setAttribute('class', 'list-item-done');
     newDone.setAttribute('type', 'checkbox');
+    newDone.setAttribute('id', `${item.id}`);
     newDone.checked = item.done;
 
+    const newDoneLabel = document.createElement('label');
+    newDoneLabel.setAttribute('for', `${item.id}`);
+
     newDoneContainer.append(newDone);
+    newDoneContainer.append(newDoneLabel);
     newRow.append(newDoneContainer);
 
     newRow.insertAdjacentHTML('beforeend', '<div class="list-item-ticket">\n'
@@ -172,6 +177,11 @@ export default class Page {
     document.querySelector('ul.list').append(newRow);
   }
 
+  /**
+   * Функция обновления страницы
+   *
+   * @param full: true - загрузка данных из удалённой БД. По умолчанию - false
+   */
   async update(full = false) {
     document.querySelectorAll('li.list-item').forEach((item) => item.remove());
     this.dancer.classList.remove('hidden');
