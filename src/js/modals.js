@@ -7,12 +7,14 @@ export default class Modals {
    * Функция открытия модального окна
    *
    * @param modal: нужное модальное окно
-   * @param row (опционально): строка таблицы с пунктом, который необходимо изменить
+   * @param rowId (опционально): data-id строки таблицы
+   * @param list (опционально): массив данных для изменения
    */
-  static show(modal, row) {
-    if (row) {
-      modal.querySelector('#title').value = row.querySelector('.list-item-title').textContent;
-      modal.querySelector('#description').value = row.querySelector('.list-item-description').textContent;
+  static show(modal, rowId = undefined, list = undefined) {
+    if (rowId && list) {
+      const target = list.find((item) => item.id.toString() === rowId);
+      modal.querySelector('#title').value = target.name;
+      modal.querySelector('#description').value = target.description;
       this.validity = { title: true, description: true };
     }
     Modals.toggle(modal, true);
@@ -36,22 +38,23 @@ export default class Modals {
    * Функция обработки нажатия на кнопку сохранения
    *
    * @param button: кнопка сохранения
-   * @param row (если есть): строка таблицы с пунктом, который необходимо изменить
+   * @param rowId (если есть): data-id строки таблицы
    * @param modal: нужное модальное окно (подразумевается .modal-add-update)
    * @param list: массив данных для изменения
    * @returns {Promise<void>}
    */
-  static async save(button, row, modal, list) {
+  static async save(button, rowId, modal, list) {
     const name = modal.querySelector('#title').value.trim();
     const description = modal.querySelector('#description').value.trim();
     const formData = new FormData();
-    if (row) {
-      const target = list.find((item) => item.id.toString() === row.getAttribute('data-id'));
+    if (rowId) {
+      const target = list.find((item) => item.id.toString() === rowId);
       target.name = name;
       target.description = description;
 
       // Sending a request
-      Object.entries({ id: row.getAttribute('data-id'), name, description }).forEach((field) => formData.append(field[0], field[1]));
+      Object.entries({ id: rowId, name, description })
+        .forEach((field) => formData.append(field[0], field[1]));
       Modals.cancel(modal);
       await Storage.request('update', formData);
     } else {
@@ -85,16 +88,15 @@ export default class Modals {
   /**
    * Функция обработки нажатия на кнопку удаления
    *
-   * @param row: строка таблицы с пунктом, который необходимо удалить
+   * @param rowId: data-id строки таблицы
    * @param modal: нужное модальное окно (подразумевается .modal-delete)
    * @param list: массив данных для изменения
    * @returns {Promise<void>}
    */
-  static async delete(row, modal, list) {
+  static async delete(rowId, modal, list) {
     const formData = new FormData();
-    const dataId = row.getAttribute('data-id');
-    formData.append('id', dataId);
-    list.splice(list.findIndex((item) => item.id === dataId), 1);
+    formData.append('id', rowId);
+    list.splice(list.findIndex((item) => item.id === rowId), 1);
     Modals.cancel(modal);
     await Storage.request('delete', formData);
   }

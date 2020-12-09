@@ -35,7 +35,7 @@ export default class Page {
    */
   addListeners() {
     this.plus.addEventListener('click', () => {
-      this.targetRow = 0;
+      this.targetRowId = undefined;
       Modals.show(this.modalAddUpdate);
     });
 
@@ -63,11 +63,11 @@ export default class Page {
       };
       const item = resolveSVG();
       if (item.classList.value === 'list-item-actions-update') {
-        this.targetRow = item.closest('li');
+        this.targetRowId = item.closest('li').getAttribute('data-id');
         this.validity = { title: false, description: true };
-        Modals.show(this.modalAddUpdate, this.targetRow);
+        Modals.show(this.modalAddUpdate, this.targetRowId, this.list.data);
       } else if (item.classList.value === 'list-item-actions-delete') {
-        this.targetRow = item.closest('li');
+        this.targetRowId = item.closest('li').getAttribute('data-id');
         Modals.show(this.modalDelete);
       } else if (item.classList.value === 'list-item-done') {
         await this.quickSave(event.target);
@@ -81,7 +81,7 @@ export default class Page {
       }
     });
 
-    this.form.querySelectorAll('input').forEach((input) => {
+    this.form.querySelectorAll('input, textarea').forEach((input) => {
       input.addEventListener('input', (event) => {
         this.validity[event.target.id] = validation(event.target, this.save);
         // Обрабатываем ситуацию, когда нужно изменить только описание
@@ -98,14 +98,14 @@ export default class Page {
 
     this.save.addEventListener('click', async () => {
       this.dancer.classList.remove('hidden');
-      await Modals.save(this.save, this.targetRow, this.modalAddUpdate, this.list.data);
+      await Modals.save(this.save, this.targetRowId, this.modalAddUpdate, this.list.data);
       await this.update();
       this.dancer.classList.add('hidden');
     });
 
     this.delete.addEventListener('click', async () => {
       this.dancer.classList.remove('hidden');
-      await Modals.delete(this.targetRow, this.modalDelete, this.list.data);
+      await Modals.delete(this.targetRowId, this.modalDelete, this.list.data);
       await this.update();
       this.dancer.classList.add('hidden');
     });
@@ -113,6 +113,8 @@ export default class Page {
 
   /**
    * Функция изменения статуса готовности
+   *
+   * @param checkbox: флажок, на который нажали (через label)
    */
   async quickSave(checkbox) {
     const row = checkbox.closest('li');
@@ -130,6 +132,8 @@ export default class Page {
 
   /**
    * Функция отрисовки пунктов
+   *
+   * @param item: элемент массива данных
    */
   render(item) {
     const newRow = document.createElement('li');
@@ -152,9 +156,13 @@ export default class Page {
     newDoneContainer.append(newDoneLabel);
     newRow.append(newDoneContainer);
 
+    // Списки содержат символы новой строки. Обрабатываем их для правильной отрисовки
+    const enter = '\n';
+    const htmlDescription = item.description.includes(enter) ? item.description.split(enter).join('<br>') : item.description;
+
     newRow.insertAdjacentHTML('beforeend', '<div class="list-item-ticket">\n'
       + `                        <div class="list-item-title">${item.name}</div>\n`
-      + `                        <div class="list-item-description">${item.description}</div>\n`
+      + `                        <div class="list-item-description">${htmlDescription}</div>\n`
       + '                    </div>\n'
       + `                    <div class="list-item-date">${item.date}</div>\n`
       + '                    <div class="list-item-actions">\n'
