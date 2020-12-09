@@ -84,6 +84,10 @@ export default class Page {
     this.form.querySelectorAll('input').forEach((input) => {
       input.addEventListener('input', (event) => {
         this.validity[event.target.id] = validation(event.target, this.save);
+        // Обрабатываем ситуацию, когда нужно изменить только описание
+        if (event.target.id === 'description') {
+          this.validity.title = validation(this.page.querySelector('#title'), this.save);
+        }
       });
     });
 
