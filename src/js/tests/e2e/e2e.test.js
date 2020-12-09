@@ -62,11 +62,15 @@ describe('E2E', () => {
       const save = await page.$('button[class=save]');
       save.click();
       await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      console.log('line 65');
       await page.waitForFunction(() => document.querySelector('li.list-item .list-item-title').textContent === 'A ticket title');
+      console.log('line 67');
       const ticket = await page.$('li[class=list-item] [class=list-item-title]');
       ticket.click();
+      console.log('line 70');
       await page.waitForFunction(() => document.querySelector('li.list-item .list-item-description')
         .textContent === 'A description for a ticket');
+      console.log('line 73');
 
       // Update
       const update = await page.$('svg[class=list-item-actions-update]');
@@ -78,11 +82,15 @@ describe('E2E', () => {
       await description.type('Another description for a ticket');
       save.click();
       await page.waitForFunction(() => document.querySelector('div.modal-add-update').classList.contains('hidden'));
+      console.log('line 85');
       await page.waitForFunction(() => document.querySelector('li.list-item .list-item-title').textContent === 'Another ticket title');
+      console.log('line 87');
       const ticketNew = await page.$('li[class=list-item] [class=list-item-title]');
       ticketNew.click();
+      console.log('line 90');
       await page.waitForFunction(() => document.querySelector('li.list-item .list-item-description')
         .textContent === 'Another description for a ticket');
+      console.log('line 93');
 
       // Delete
       const remove = await page.$('svg[class=list-item-actions-delete]');
