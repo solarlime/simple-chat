@@ -53,7 +53,10 @@ app.use(async (ctx) => {
             await col.removeOne({ id: document.id });
             return { status: 'Removed', data: '' };
           default:
-            return { status: 'Fetched', data: await col.find().toArray() };
+            const data = await col.find().toArray();
+            // eslint-disable-next-line no-param-reassign
+            data.forEach((item) => { item.done = (item.done === 'true'); });
+            return { status: 'Fetched', data };
         }
       }
       throw TypeError('No action is mentioned');
