@@ -1,6 +1,5 @@
 ![CI](https://github.com/solarlime/help-desk/workflows/CI/badge.svg?branch=master)
 ![CI](https://github.com/solarlime/help-desk/workflows/CI/badge.svg?branch=night-builds)
-![Vercel](https://vercelbadge.vercel.app/api/solarlime/help-desk)
 
 # Help desk
 
