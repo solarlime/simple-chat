@@ -1,5 +1,5 @@
 {
-  "name": "help-desk",
+  "name": "simple-chat",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solarlime/help-desk.git"
+    "url": "git+https://github.com/solarlime/simple-chat.git"
   },
   "author": "solarlime",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/solarlime/help-desk/issues"
+    "url": "https://github.com/solarlime/simple-chat/issues"
   },
-  "homepage": "https://github.com/solarlime/help-desk#readme",
+  "homepage": "https://github.com/solarlime/simple-chat#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
