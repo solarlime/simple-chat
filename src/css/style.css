@@ -1,14 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 :root {
-    --done-width: 30px;
-    --date-width: 100px;
-    --actions-width: 70px;
-    --done: 20px;
+    --header: 80px;
+    --font: "Inter", Arial, sans-serif;
 }
 
 html {
-    font-family: "Inter", Arial, sans-serif;
+    font-family: var(--font);
     font-size: 16px;
     word-wrap: break-word;
 }
@@ -16,180 +14,83 @@ html {
 body {
     min-width: 320px;
     margin: 0;
+    box-sizing: border-box;
+    background-color: #25272a;
+    color: white;
+}
+
+.header {
+    display: flex;
+    height: var(--header);
+    align-items: center;
+    justify-content: center;
 }
 
 .header-title {
-    display: block;
     box-sizing: border-box;
-    padding-bottom: 10px;
     text-align: center;
 }
 
-.title-container {
+main {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 80%;
-    margin: 0 auto 10px auto;
-}
-
-.title-container-plus {
-    cursor: pointer;
-    color: green;
-}
-
-.list {
-    width: 80%;
-    height: auto;
-    padding: 0;
+    width: 80vw;
+    height: calc(100vh - var(--header));
+    padding-bottom: 30px;
     margin: 0 auto;
-    border: 1px solid crimson;
-}
-
-.list:first-child {
-    border-bottom: 0;
-}
-
-div.list {
-    border-bottom: 0;
-}
-
-.list-item {
-    font-size: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    list-style: none;
-    padding: 10px;
-}
-
-.list-item-done-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: var(--done);
-    height: var(--done);
-    padding-right: calc(var(--done-width) - var(--done));
-}
-
-.list-item-done {
-    width: var(--done);
-    height: var(--done);
-}
-
-/* Thanks for GeoffreyCrofte for custom checkboxes: https://codepen.io/GeoffreyCrofte/pen/BiHzp */
-/* base for label styling */
-[type="checkbox"]:not(:checked),
-[type="checkbox"]:checked {
-    position: absolute;
-    left: -9999px;
-}
-[type="checkbox"]:not(:checked) + label,
-[type="checkbox"]:checked + label {
-    position: relative;
-    cursor: pointer;
-    width: var(--done);
-    height: var(--done);
-}
-
-/* checkbox aspect */
-[type="checkbox"]:not(:checked) + label:before,
-[type="checkbox"]:checked + label:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: var(--done);
-    height: var(--done);
-    border: 1px solid #ccc;
-    background: #fff;
-    border-radius: 4px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
     box-sizing: border-box;
 }
-/* checked mark aspect */
-[type="checkbox"]:not(:checked) + label:after,
-[type="checkbox"]:checked + label:after {
-    content: '\2713\0020';
-    position: absolute;
-    top: 1px;
-    left: 2px;
-    font-size: 1.35rem;
-    line-height: 0.8;
-    color: green;
-    transition: all .2s;
-}
-/* checked mark aspect changes */
-[type="checkbox"]:not(:checked) + label:after {
-    opacity: 0;
-    transform: scale(0);
-}
-[type="checkbox"]:checked + label:after {
-    opacity: 1;
-    transform: scale(1);
-}
-/* disabled checkbox */
-[type="checkbox"]:disabled:not(:checked) + label:before,
-[type="checkbox"]:disabled:checked + label:before {
-    box-shadow: none;
-    border-color: #bbb;
-    background-color: #ddd;
-}
-[type="checkbox"]:disabled:checked + label:after {
-    color: #999;
-}
-[type="checkbox"]:disabled + label {
-    color: #aaa;
+
+.online-container, .chat-container {
+    margin: 0 2px;
+    box-sizing: border-box;
+    border: 1px solid #4BD0A0;
+    border-radius: 10px;
 }
 
-[type="checkbox"]:checked + label:hover:before {
-    border: 1px solid crimson;
+.online-container {
+    width: 30%;
 }
 
-[type="checkbox"]:not(:checked) + label:hover:before {
-    border: 1px solid green;
+.chat-container {
+    width: 70%;
 }
 
-.list-item-ticket {
-    width: calc(100% - var(--done-width) - var(--date-width) - var(--date-width));
+.online, .chat {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    height: 100%;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.online::-webkit-scrollbar, .chat::-webkit-scrollbar {
+    display: none;
+}
+
+.online-member, .chat-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 10px);
+    height: 100px;
+    border: 1px dashed #4BD0A0;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
-.list-item-description {
-    color: darkgray;
-    font-size: 0.8rem;
+.chat-item {
+    background-color: rgba(75, 208, 160, 0.5);
+    border: 0;
 }
 
-.list-item-date {
-    width: var(--date-width);
+.self {
+    margin: 0 0 0 auto;
 }
 
-.list-item-actions {
-    font-size: 1rem;
-    display: flex;
-    flex-wrap: nowrap;
-    width: var(--actions-width);
-    justify-content: flex-end;
-}
-
-ul.list .list-item-actions {
-    font-size: 1rem;
-}
-
-.list-item-actions-update, .list-item-actions-delete {
-    width: var(--done);
-    height: var(--done);
-    cursor: pointer;
-}
-
-.list-item-actions-update {
-    fill: green;
-    margin-right: 5px;
-}
-
-.list-item-actions-delete {
-    fill: crimson;
+.others {
+    margin: 0 auto 0 0;
 }
 
 .modal-container {
@@ -200,7 +101,14 @@ ul.list .list-item-actions {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(102, 102, 102, 0.5);
+    background: rgba(102, 102, 102, 1);
+}
+
+@supports (backdrop-filter: none) {
+    .modal-container {
+        background: rgba(102, 102, 102, 0.5);
+        backdrop-filter: blur(5px);
+    }
 }
 
 .modal {
@@ -211,72 +119,47 @@ ul.list .list-item-actions {
     max-width: 400px;
     height: auto;
     padding: 20px 0;
-    border: 1px solid crimson;
-    background: mistyrose;
+    background: #25272a;
+    border-radius: 10px;
 }
 
-.wrapper {
-    width: 270px;
-    height: 300px;
-    object-fit: contain;
-    overflow: hidden;
-}
-
-.modal-dancer {
-    background: white;
-    opacity: 0.7;
-}
-
-.dancer {
-    width: 300px;
-    height: 300px;
-    text-align: center;
-}
-
-
-#add-and-update, #delete {
+#login-form {
+    display: flex;
+    flex-direction: column;
     width: 80%;
 }
 
-form label {
-    width: 100%;
-    display: block;
-    box-sizing: border-box;
-    padding: 10px 0;
-    margin: 0 auto;
+.login {
+    display: flex;
+    flex-direction: column;
     text-align: center;
 }
 
+#login {
+    height: 30px;
+    margin: 0;
+    border: 1px solid white;
+    background-color: white;
+    border-radius: 5px;
+}
+
+#login, #login::placeholder {
+    text-align: center;
+    line-height: 30px;
+    font-family: var(--font);
+    font-size: inherit;
+}
+
 .error {
-    display: block;
+    margin-top: 10px;
     width: 100%;
-    font-size: 0.8rem;
+    font-size: inherit;
+    text-align: center;
+    color: darksalmon;
 }
 
-.add {
-    padding: 0;
-}
-
-.add, .update {
-    text-align: left;
-}
-
-#title, #description {
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 5px;
-    border: 1px solid grey;
-    font-family: inherit;
-    font-size: 0.8rem;
-}
-
-#title:focus, #description:focus {
-    border: 1px solid crimson;
-}
-
-#description {
-    height: 100px;
+#login:focus {
+    border: 1px solid #4BD0A0;
 }
 
 textarea {
@@ -288,31 +171,27 @@ textarea::-webkit-scrollbar {
     width: 0;
 }
 
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-}
-
 button {
     padding: 5px 0;
-    border: 1px solid rgb(224, 224, 224);
-    border-radius: 4px;
-    background-color: rgb(246, 245, 244);
+    margin-top: 10px;
+    border: 1px solid rgba(75, 208, 160, 0.2);
+    border-radius: 5px;
+    background-color: #4BD0A0;
     color: black;
 }
 
 button:hover {
-    background-color: rgb(246, 245, 244);
+    background-color: rgba(75, 208, 160, 0.8);
 }
 
 button:disabled {
-    background-color: rgb(246, 245, 244);
-    color: rgb(146, 149, 149);
+    background-color: crimson;
+    color: white;
+    cursor: not-allowed;
 }
 
-.save, .cancel, .delete {
-    width: auto;
-    flex-grow: 1;
+.continue {
+    width: 100%;
     cursor: pointer;
 }
 
@@ -320,39 +199,16 @@ button:disabled {
     display: none;
 }
 
-.spoiler {
-    cursor: pointer;
-}
-
-.spoiler .list-item-title {
-    color: green;
-}
-
-.no-spoiler {
-    padding-top: 20px;
-}
-
 @media (max-width: 500px) {
     :root {
-        --done-width: 25px;
-        --date-width: 55px;
-        --actions-width: 40px;
-        --done: 16px;
+        --header: 50px;
     }
 
     html {
-        font-size: 10px;
-    }
-
-    /* checked mark aspect */
-    [type="checkbox"]:not(:checked) + label:after,
-    [type="checkbox"]:checked + label:after {
-        top: 2px;
-        left: 3px;
-        font-size: 1.35rem;
+        font-size: 12px;
     }
 
     .modal {
-        font-size: 16px;
+        font-size: 12px;
     }
 }

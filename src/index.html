@@ -10,60 +10,72 @@
 <body>
     <header class="header">
         <h1 class="header-title">
-            Help desk
+            Simple chat
         </h1>
     </header>
     <main>
-        <div class="list-container">
-            <p class="title-container">
-                List
-                <span class="title-container-plus">Add new ticket</span>
-            </p>
-            <div class="list">
-                <div class="list-item">
-                    <div class="list-item-done-container"></div>
-                    <div class="list-item-ticket">Name</div>
-                    <div class="list-item-date">Date</div>
-                    <div class="list-item-actions">Actions</div>
-                </div>
-            </div>
-            <ul class="list">
+        <div class="online-container">
+            <ul class="online">
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+                <li class="online-member">
+                    <div class="online-member-name">Morpheus</div>
+                </li>
+            </ul>
+        </div>
+        <div class="chat-container">
+            <ul class="chat">
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text self">Hello, everybody!</div>
+                </li>
+                <li class="chat-item">
+                    <div class="chat-item-text others">Hello, Morpheus!</div>
+                </li>
             </ul>
         </div>
     </main>
-    <div class="modal-container modal-add-update hidden">
+    <div class="modal-container modal-login">
         <div class="modal">
-            <form id="add-and-update" novalidate>
-                <label class="add">
-                    Title
-                    <input id="title" placeholder="Input the title" type="text" required>
-                    <span class="error error-name hidden"></span>
+            <form id="login-form" novalidate>
+                <label class="login">
+                    <textarea id="login" placeholder="Enter the username" type="text"></textarea>
                 </label>
-                <label class="update">
-                    Description
-                    <textarea id="description" placeholder="Input the description" type="text"></textarea>
-                </label>
+                <span class="error error-name">This username already exists</span>
                 <div class="button-container">
-                    <button class="save" type="button">Save</button>
-                    <button class="cancel" type="button">Cancel</button>
+                    <button class="continue" type="button">Continue</button>
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="modal-container modal-delete hidden">
-        <div class="modal">
-            <form id="delete">
-                <label>Do you want to remove this ticket?</label>
-                <div class="button-container">
-                    <button class="delete" type="button">Delete</button>
-                    <button class="cancel" type="button">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="modal-container modal-dancer hidden">
-        <div class="wrapper">
-            <img class="dancer" src="img/tambourine-dancer.gif" alt="">
         </div>
     </div>
 </body>
