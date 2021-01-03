@@ -6,9 +6,9 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "test": "jest --testPathPattern=./src/",
-    "coverage": "jest --testPathPattern=./src/ --coverage",
-    "e2e": "jest --testPathPattern=./e2e/",
+    "test": "jest --passWithNoTests",
+    "coverage": "jest --passWithNoTests",
+    "e2e": "jest --passWithNoTests",
     "lint": "eslint .",
     "vercel": "yarn run build && vercel",
     "vercel-dev": "yarn run vercel dev"
