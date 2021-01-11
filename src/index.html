@@ -15,11 +15,14 @@
     </header>
     <main>
         <input type="checkbox" id="menu-button">
-        <label id="menu-button-label" for="menu-button">
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-        </label>
+        <div class="top">
+            <label id="menu-button-label" for="menu-button">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </label>
+            <div class="greeting"></div>
+        </div>
         <div class="container">
             <div class="online-container">
                 <ul class="online">
@@ -74,20 +77,20 @@
                 </div>
                 <form id="input-send-form">
                     <label id="input-send-form-label">
-                        <input id="input" placeholder="Place your text here">
-                        <button id="send" type="button">Send</button>
+                        <input id="input" placeholder="Type here" type="text" autocomplete="off">
+                        <button id="send" type="submit">Send</button>
                     </label>
                 </form>
             </div>
         </div>
     </main>
-    <div class="modal-container modal-login hidden">
+    <div class="modal-container modal-login">
         <div class="modal">
             <form id="login-form" novalidate>
                 <label class="login">
-                    <input id="login" placeholder="Enter the username" type="text">
+                    <input id="login" placeholder="Enter the username" type="text" autocomplete="off">
                 </label>
-                <span class="error error-name">This username already exists</span>
+                <span class="error error-name hidden">This member is online</span>
                 <div class="button-container">
                     <button class="continue" type="button">Continue</button>
                 </div>
