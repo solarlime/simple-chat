@@ -14,62 +14,78 @@
         </h1>
     </header>
     <main>
-        <div class="online-container">
-            <ul class="online">
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-                <li class="online-member">
-                    <div class="online-member-name">Morpheus</div>
-                </li>
-            </ul>
-        </div>
-        <div class="chat-container">
-            <ul class="chat">
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text self">Hello, everybody!</div>
-                </li>
-                <li class="chat-item">
-                    <div class="chat-item-text others">Hello, Morpheus!</div>
-                </li>
-            </ul>
+        <input type="checkbox" id="menu-button">
+        <label id="menu-button-label" for="menu-button">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+        </label>
+        <div class="container">
+            <div class="online-container">
+                <ul class="online">
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                    <li class="online-member">
+                        <div class="online-member-name">Morpheus</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="chat-and-send-container">
+                <div class="chat-container">
+                    <ul class="chat">
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text self">Hello, everybody!</div>
+                        </li>
+                        <li class="chat-item">
+                            <div class="chat-item-text others">Hello, Morpheus!</div>
+                        </li>
+                    </ul>
+                </div>
+                <form id="input-send-form">
+                    <label id="input-send-form-label">
+                        <input id="input" placeholder="Place your text here">
+                        <button id="send" type="button">Send</button>
+                    </label>
+                </form>
+            </div>
         </div>
     </main>
-    <div class="modal-container modal-login">
+    <div class="modal-container modal-login hidden">
         <div class="modal">
             <form id="login-form" novalidate>
                 <label class="login">
-                    <textarea id="login" placeholder="Enter the username" type="text"></textarea>
+                    <input id="login" placeholder="Enter the username" type="text">
                 </label>
                 <span class="error error-name">This username already exists</span>
                 <div class="button-container">
