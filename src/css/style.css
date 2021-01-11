@@ -293,6 +293,7 @@ button:disabled {
     }
 
     .hamburger {
+        display: block;
         width: 25px;
         height: 3px;
         background-color: #4BD0A0;
