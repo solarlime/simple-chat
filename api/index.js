@@ -1,77 +1,68 @@
-/* eslint-disable no-case-declarations */
-
 const Koa = require('koa');
-
-const app = new Koa();
+const Router = require('@koa/router');
 const koaBody = require('koa-body');
 const koaCors = require('@koa/cors');
-const { MongoClient } = require('mongodb');
+const { ServeGrip } = require('@fanoutio/serve-grip');
+const { WebSocketMessageFormat } = require('@fanoutio/grip');
+
+const CHANNEL_NAME = 'simple-chat';
+const app = new Koa();
+const router = new Router();
+const serveGrip = new ServeGrip(
+  {
+    grip: {
+      control_uri: 'https://api.fanout.io/realm/8bcbc7a2',
+      control_iss: '8bcbc7a2',
+      key: Buffer.from(process.env.GRIP_KEY, 'base64'),
+    },
+  },
+);
 
 app.use(koaCors({ allowMethods: 'GET,PUT,POST,DELETE' }));
-
 app.use(koaBody({
   urlencoded: true,
   multipart: true,
-  parsedMethods: ['POST', 'PUT', 'DELETE', 'GET'],
+  parsedMethods: ['POST', 'GET'],
+  json: true,
 }));
+app.use(serveGrip.koa);
 
-app.use(async (ctx) => {
-  ctx.res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
-
-  const url = process.env.MONGO_URL;
-  const client = new MongoClient(url, { useUnifiedTopology: true });
-
-  // The database to use
-  const dbName = 'help-desk';
-
-  // eslint-disable-next-line consistent-return
-  async function run() {
-    try {
-      await client.connect();
-      console.log('Connected correctly to server');
-      const db = client.db(dbName);
-
-      // Use the collection "items"
-      const col = db.collection('items');
-      const document = ctx.request.body;
-      const { query } = ctx.request;
-
-      if (query.action) {
-        switch (ctx.request.query.action) {
-          case 'new':
-            await col.insertOne(document);
-            return { status: 'Added', data: '' };
-          case 'update':
-            if (document.done) {
-              await col.updateOne({ id: document.id }, { $set: { done: document.done } });
-            } else {
-              await col.updateOne({ id: document.id },
-                { $set: { name: document.name, description: document.description } });
-            }
-            return { status: 'Updated', data: '' };
-          case 'delete':
-            await col.removeOne({ id: document.id });
-            return { status: 'Removed', data: '' };
-          default:
-            const data = await col.find().toArray();
-            // eslint-disable-next-line no-param-reassign
-            data.forEach((item) => { item.done = (item.done === 'true'); });
-            return { status: 'Fetched', data };
-        }
-      }
-      throw TypeError('No action is mentioned');
-    } catch (err) {
-      console.log(err.stack);
-    } finally {
-      await client.close();
-    }
+// Websocket-over-HTTP is translated to HTTP POST
+router.post('/api/index', async (ctx) => {
+  const { wsContext } = ctx.req.grip;
+  if (wsContext == null) {
+    ctx.response.status = 400;
+    ctx.response.body = '[not a websocket request]\n';
+    return;
   }
 
-  // eslint-disable-next-line no-return-assign
-  const result = await run().catch(console.dir);
-  ctx.response.body = result;
+  // If this is a new connection, accept it and subscribe it to a channel
+  if (wsContext.isOpening()) {
+    wsContext.accept();
+    wsContext.subscribe(CHANNEL_NAME);
+  }
+
+  while (wsContext.canRecv()) {
+    const message = wsContext.recv();
+
+    if (message == null) {
+      // If return value is undefined then connection is closed
+      wsContext.close();
+      break;
+    }
+
+    // Echo the message
+    const publisher = serveGrip.getPublisher();
+    // eslint-disable-next-line no-await-in-loop
+    await publisher.publishFormats(CHANNEL_NAME, new WebSocketMessageFormat(message));
+  }
+
+  // In Koa, specifically set the response body to null so that
+  // it doesn't return 404
+  ctx.response.body = null;
 });
 
-app.listen(7000, () => console.log('Server works on 7000'));
+app.use(router.routes())
+  .use(router.allowedMethods());
 
 module.exports = app;
