@@ -144,12 +144,25 @@ main {
     background-color: rgba(220, 20, 60, 0.5);
 }
 
+.chat-item-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-item-text-extras {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #25272a;
+}
+
 .self {
-    margin: 0 0 0 auto;
+    align-items: flex-end;
+    margin-left: auto;
 }
 
 .others {
-    margin: 0 auto 0 0;
+    align-items: flex-start;
+    margin-right: auto;
 }
 
 #input-send-form {
