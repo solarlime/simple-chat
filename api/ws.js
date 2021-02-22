@@ -7,7 +7,7 @@ const { WebSocketMessageFormat } = require('@fanoutio/grip');
 
 const CHANNEL_NAME = 'simple-chat';
 const app = new Koa();
-const router = new Router();
+const router = new Router({ prefix: '/api/ws' });
 const serveGrip = new ServeGrip(
   {
     grip: {
@@ -28,7 +28,7 @@ app.use(koaBody({
 app.use(serveGrip.koa);
 
 // Websocket-over-HTTP is translated to HTTP POST
-router.post('/api/index', async (ctx) => {
+router.post('/', async (ctx) => {
   const { wsContext } = ctx.req.grip;
   if (wsContext == null) {
     ctx.response.status = 400;
@@ -39,20 +39,31 @@ router.post('/api/index', async (ctx) => {
   // If this is a new connection, accept it and subscribe it to a channel
   if (wsContext.isOpening()) {
     wsContext.accept();
+
+    const publisher = serveGrip.getPublisher();
+    // eslint-disable-next-line no-await-in-loop
+    await publisher.publishFormats(CHANNEL_NAME,
+      new WebSocketMessageFormat(JSON.stringify(wsContext)));
+
     wsContext.subscribe(CHANNEL_NAME);
   }
 
   while (wsContext.canRecv()) {
     const message = wsContext.recv();
+    const publisher = serveGrip.getPublisher();
 
     if (message == null) {
       // If return value is undefined then connection is closed
+
+      // eslint-disable-next-line no-await-in-loop
+      await publisher.publishFormats(CHANNEL_NAME,
+        new WebSocketMessageFormat(JSON.stringify(wsContext)));
       wsContext.close();
       break;
     }
 
     // Echo the message
-    const publisher = serveGrip.getPublisher();
+    // const publisher = serveGrip.getPublisher();
     // eslint-disable-next-line no-await-in-loop
     await publisher.publishFormats(CHANNEL_NAME, new WebSocketMessageFormat(message));
   }
