@@ -4,19 +4,19 @@ import id from 'uniqid';
 
 export default class Utils {
   static async login(modal, user, members) {
-    const userObject = { name: user };
     try {
       const res = await fetch('/api/http/mongo/update/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
         },
-        body: JSON.stringify(userObject),
+        body: JSON.stringify(user),
       });
       const json = await res.json();
       console.log(json);
-      members.push(user);
-      document.querySelector('.greeting').textContent = `You logged as ${user}`;
+      // TODO: потенциальная ошибка: нужна синхронизация по пользователям
+      members.push(user.name);
+      document.querySelector('.greeting').textContent = `You logged as ${user.name}`;
       modal.classList.add('hidden');
       return true;
     } catch (e) {
@@ -30,13 +30,13 @@ export default class Utils {
     loginButton.disabled = true;
   }
 
-  static async loginFormHandler(whoAmI, loginInput, sendInput, sendButton, modalLogin, members) {
-    whoAmI = loginInput.value.trim();
+  static async loginFormHandler(user, loginInput, sendInput, sendButton, modalLogin, members) {
+    user.name = loginInput.value.trim();
     sendInput.disabled = false;
     sendButton.disabled = false;
     try {
-      await this.login(modalLogin, whoAmI, members);
-      return whoAmI;
+      await this.login(modalLogin, user, members);
+      return user.name;
     } catch (e) {
       throw new Error(e);
     }

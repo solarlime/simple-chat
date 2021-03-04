@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+
 const Koa = require('koa');
 const Router = require('@koa/router');
 const koaBody = require('koa-body');
@@ -40,12 +42,13 @@ router.post('/', async (ctx) => {
   if (wsContext.isOpening()) {
     wsContext.accept();
 
-    const publisher = serveGrip.getPublisher();
-    // eslint-disable-next-line no-await-in-loop
-    await publisher.publishFormats(CHANNEL_NAME,
-      new WebSocketMessageFormat(JSON.stringify(wsContext)));
+    // const publisher = serveGrip.getPublisher();
+    // // eslint-disable-next-line no-await-in-loop
+    // await publisher.publishFormats(CHANNEL_NAME,
+    //   new WebSocketMessageFormat(JSON.stringify(wsContext.id)));
 
     wsContext.subscribe(CHANNEL_NAME);
+    wsContext.send(JSON.stringify({ openId: wsContext.id }));
   }
 
   while (wsContext.canRecv()) {
@@ -55,10 +58,16 @@ router.post('/', async (ctx) => {
     if (message == null) {
       // If return value is undefined then connection is closed
 
-      // eslint-disable-next-line no-await-in-loop
       await publisher.publishFormats(CHANNEL_NAME,
         new WebSocketMessageFormat(JSON.stringify(wsContext)));
       wsContext.close();
+      // await fetch('/api/http/mongo/fetch/users', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json;charset=utf-8',
+      //   },
+      //   body: JSON.stringify(userObject),
+      // });
       break;
     }
 

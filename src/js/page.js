@@ -56,10 +56,7 @@ export default class Page {
 
     async function loginWrapper(event) {
       event.preventDefault();
-      this.whoAmI = await Utils.loginFormHandler(
-        this.whoAmI, this.loginInput, this.sendInput,
-        this.sendButton, this.modalLogin, this.members,
-      );
+      console.log(this.whoAmI);
       this.createWebSocket();
       this.update();
     }
@@ -71,15 +68,22 @@ export default class Page {
   }
 
   addWebsocketListeners() {
-    this.ws.addEventListener('open', () => {
-      console.log('Connected to proxy!');
+    this.ws.addEventListener('open', (event) => {
+      console.log('Connected to proxy!', event);
     });
 
-    this.ws.addEventListener('message', (event) => {
+    this.ws.addEventListener('message', async (event) => {
       console.log('Received:', event);
       const data = JSON.parse(event.data);
 
-      if (data.isMessage) {
+      if (data.openId) {
+        this.whoAmI = await Utils.loginFormHandler(
+          { id: data.openId, name: this.whoAmI }, this.loginInput, this.sendInput,
+          this.sendButton, this.modalLogin, this.members,
+        );
+      }
+
+      if (data.isMessage && this.whoAmI) {
         Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
       }
     });
