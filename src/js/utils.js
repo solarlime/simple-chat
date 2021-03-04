@@ -6,7 +6,7 @@ export default class Utils {
   static async login(modal, user, members) {
     const userObject = { name: user };
     try {
-      const res = await fetch('https://simple-chat.solarlime.vercel.app/api/http/mongo/update/users', {
+      const res = await fetch('/api/http/mongo/update/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
