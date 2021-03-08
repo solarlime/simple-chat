@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-useless-catch */
 
 import id from 'uniqid';
 
@@ -14,13 +14,17 @@ export default class Utils {
       });
       const json = await res.json();
       console.log(json);
-      // TODO: потенциальная ошибка: нужна синхронизация по пользователям
-      members.push(user.name);
+      if (json.status === 'Added') {
+        members = json.data;
+        console.log(members);
+      } else {
+        throw new Error(json.data);
+      }
       document.querySelector('.greeting').textContent = `You logged as ${user.name}`;
       modal.classList.add('hidden');
       return true;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -38,7 +42,7 @@ export default class Utils {
       await this.login(modalLogin, user, members);
       return user.name;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 

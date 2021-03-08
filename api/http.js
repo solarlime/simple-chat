@@ -66,14 +66,26 @@ app.use(async (ctx, next) => {
   ctx.response.body = JSON.stringify(result);
 });
 
+async function getUsers(col) {
+  const data = await col.find().toArray();
+  return data.map((item) => {
+    const { name } = item;
+    return name;
+  });
+}
+
 router.post(routes.updateUsers, async (ctx) => {
   const { col } = ctx.state;
   try {
     const document = ctx.request.body;
+    const findUser = await col.findOne({ name: document.name });
+    if (findUser) {
+      throw new Error('This user has already connected!');
+    }
     await col.insertOne(document);
-    return { status: 'Added', data: '' };
+    return { status: 'Added', data: await getUsers(col) };
   } catch (e) {
-    return { status: 'Not added', data: e };
+    return { status: 'Not added', data: e.message };
   }
 });
 
@@ -82,10 +94,7 @@ router.get(routes.fetchUsers, async (ctx) => {
   const data = await col.find().toArray();
   return {
     status: 'Fetched',
-    data: data.map((item) => {
-      const { name } = item;
-      return name;
-    }),
+    data: await getUsers(col),
   };
 });
 
