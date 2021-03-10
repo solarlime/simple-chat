@@ -135,6 +135,22 @@ main {
     border: 0;
 }
 
+.chat-item-service {
+    justify-content: center;
+    width: 100%;
+    font-size: 0.8rem;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.connect {
+    color: #4BD0A0;
+}
+
+.disconnect {
+    color: rgb(220, 20, 60);;
+}
+
 .chat-item-self {
     margin-left: auto;
     background-color: rgba(75, 208, 160, 0.5);
