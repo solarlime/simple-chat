@@ -64,6 +64,12 @@ export default class Page {
         );
         this.createWebSocket();
         this.update();
+
+        window.addEventListener('unload', () => {
+          this.ws.send(JSON.stringify({
+            isMessage: false, connect: false, name: this.whoAmI,
+          }));
+        });
       } catch (e) {
         alert(e);
         window.location.reload();
@@ -79,14 +85,21 @@ export default class Page {
   addWebsocketListeners() {
     this.ws.addEventListener('open', (event) => {
       console.log('Connected to proxy!', event);
+      this.ws.send(JSON.stringify({
+        isMessage: false, connect: true, name: this.whoAmI,
+      }));
     });
 
     this.ws.addEventListener('message', (event) => {
       console.log('Received:', event);
       const data = JSON.parse(event.data);
 
-      if (data.isMessage && this.whoAmI) {
-        Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
+      if (this.whoAmI && !data.openId) {
+        if (data.isMessage) {
+          Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
+        } else {
+          Utils.renderService(this.chatArea, data, this.whoAmI, () => (data.connect ? '' : 'dis'));
+        }
       }
     });
 

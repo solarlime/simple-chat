@@ -82,6 +82,18 @@ export default class Utils {
     chatItem.scrollIntoView(false);
   }
 
+  static renderService(chatArea, data, whoAmI, callback) {
+    const connected = callback();
+    const chatItem = document.createElement('li');
+    chatItem.setAttribute('class', 'chat-item-wrapper');
+    const chatItemDiv = document.createElement('div');
+    chatItemDiv.setAttribute('class', `chat-item chat-item-service ${connected}connect`);
+    chatItemDiv.textContent = `${data.name === whoAmI ? 'You' : data.name} ${connected}connected!`;
+    chatItem.insertAdjacentElement('beforeend', chatItemDiv);
+    chatArea.insertAdjacentElement('beforeend', chatItem);
+    chatItem.scrollIntoView(false);
+  }
+
   static clear(items) {
     items.forEach((item) => item.remove());
   }
