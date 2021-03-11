@@ -25,10 +25,10 @@ export default class Page {
     this.loginInput.disabled = false;
   }
 
-  createWebSocket() {
+  createWebSocket(reload = false) {
     this.ws = new WebSocket('wss://8bcbc7a2.fanoutcdn.com/api/ws');
     this.ws.binaryType = 'blob';
-    this.addWebsocketListeners();
+    this.addWebsocketListeners(reload);
   }
 
   addMainListeners() {
@@ -86,7 +86,7 @@ export default class Page {
     this.sendForm.addEventListener('submit', Utils.sendFormHandler.bind(this));
   }
 
-  addWebsocketListeners() {
+  addWebsocketListeners(reload = false) {
     this.ws.addEventListener('open', (event) => {
       console.log('Connected to proxy!', event);
       this.ws.send(JSON.stringify({
@@ -101,7 +101,7 @@ export default class Page {
       if (this.whoAmI && !data.openId) {
         if (data.isMessage) {
           Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
-        } else {
+        } else if (!reload) {
           Utils.renderService(this.chatArea, data, this.whoAmI, () => (data.connect ? '' : 'dis'));
         }
       }
@@ -110,7 +110,7 @@ export default class Page {
     this.ws.addEventListener('close', (event) => {
       console.log('Connection closed:', event);
       this.ws = null;
-      const cws = this.createWebSocket.bind(this);
+      const cws = this.createWebSocket.bind(this, true);
       setTimeout(cws, 5000);
     });
 
