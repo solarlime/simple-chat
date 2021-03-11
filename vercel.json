@@ -8,8 +8,16 @@
   ],
   "rewrites": [
     {
-      "source": "/backend",
-      "destination": "/api/index"
+      "source": "/api/http/:action_level_1",
+      "destination": "/api/http"
+    },
+    {
+      "source": "/api/http/:action_level_1/:action_level_2",
+      "destination": "/api/http"
+    },
+    {
+      "source": "/api/http/:action_level_1/:action_level_2/:action_level_3",
+      "destination": "/api/http"
     }
   ],
   "github": {
