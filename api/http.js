@@ -104,7 +104,6 @@ router.post(routes.deleteUsers, async (ctx) => {
 
 router.get(routes.fetchUsers, async (ctx) => {
   const { col } = ctx.state;
-  const data = await col.find().toArray();
   return {
     status: 'Fetched',
     data: await getUsers(col),
