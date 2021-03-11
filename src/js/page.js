@@ -69,6 +69,10 @@ export default class Page {
           this.ws.send(JSON.stringify({
             isMessage: false, connect: false, name: this.whoAmI,
           }));
+          const form = new FormData();
+          form.append('name', this.whoAmI);
+          // Посылаем запрос на удаление пользователя из базы
+          navigator.sendBeacon('/api/http/mongo/delete/users', form);
         });
       } catch (e) {
         alert(e);

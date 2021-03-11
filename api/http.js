@@ -15,6 +15,7 @@ function routesF() {
     mongo: '/mongo',
     fetch: '/fetch',
     update: '/update',
+    delete: '/delete',
     users: '/users',
     messages: '/messages',
   };
@@ -26,6 +27,7 @@ function routesF() {
     fetchMessages: basis.mongo + basis.fetch + basis.messages,
     updateUsers: basis.mongo + basis.update + basis.users,
     updateMessages: basis.mongo + basis.update + basis.messages,
+    deleteUsers: basis.mongo + basis.delete + basis.users,
   };
 }
 const routes = routesF(prefix);
@@ -86,6 +88,17 @@ router.post(routes.updateUsers, async (ctx) => {
     return { status: 'Added', data: await getUsers(col) };
   } catch (e) {
     return { status: 'Not added', data: e.message };
+  }
+});
+
+router.post(routes.deleteUsers, async (ctx) => {
+  const { col } = ctx.state;
+  try {
+    const document = ctx.request.body;
+    await col.deleteMany({ name: document.name });
+    return { status: 'Removed', data: '' };
+  } catch (e) {
+    return { status: 'Not removed', data: e.message };
   }
 });
 
