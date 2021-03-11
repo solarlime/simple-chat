@@ -58,8 +58,6 @@ router.post('/', async (ctx) => {
     if (message == null) {
       // If return value is undefined then connection is closed
 
-      await publisher.publishFormats(CHANNEL_NAME,
-        new WebSocketMessageFormat(JSON.stringify(wsContext)));
       wsContext.close();
       // await fetch('/api/http/mongo/fetch/users', {
       //   method: 'POST',
