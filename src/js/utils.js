@@ -97,4 +97,9 @@ export default class Utils {
   static clear(items) {
     items.forEach((item) => item.remove());
   }
+
+  static alert(text) {
+    document.querySelector('.alert-wrapper').classList.remove('hidden');
+    document.querySelector('.alert-text').textContent = text;
+  }
 }

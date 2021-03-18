@@ -75,8 +75,7 @@ export default class Page {
           navigator.sendBeacon('/api/http/mongo/delete/users', form);
         });
       } catch (e) {
-        alert(e);
-        window.location.reload();
+        Utils.alert(e);
       }
     }
 
