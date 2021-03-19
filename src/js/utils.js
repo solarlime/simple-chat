@@ -3,6 +3,13 @@
 import id from 'uniqid';
 
 export default class Utils {
+  static async fetchUsers() {
+    const res = await fetch('/api/http/mongo/fetch/users', {
+      cache: 'no-cache',
+    });
+    return res.json();
+  }
+
   static async login(modal, user, members) {
     try {
       const res = await fetch('/api/http/mongo/update/users', {

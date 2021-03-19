@@ -9,11 +9,8 @@ export default class App {
       .addEventListener('click', () => window.location.reload());
 
     try {
-      const res = await fetch('/api/http/mongo/fetch/users', {
-        cache: 'no-cache',
-      });
-      const members = await res.json();
-      console.log(members);
+      const members = await Utils.fetchUsers();
+      console.log(members.data);
       const page = new Page(members.data);
       page.addMainListeners();
     } catch (e) {
