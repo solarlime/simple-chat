@@ -35,6 +35,7 @@ body {
 
 main {
     width: 80%;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -214,6 +215,10 @@ main {
     color: white;
 }
 
+#input:disabled {
+    cursor: not-allowed;
+}
+
 #input::placeholder {
     color: ghostwhite;
 }
@@ -221,7 +226,7 @@ main {
 #send {
     width: var(--button);
     margin-left: 5px;
-    background-color: #4BD0A0;
+    border: 0;
     font-family: var(--font);
     font-size: 0.9rem;
 }
