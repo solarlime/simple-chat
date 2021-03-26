@@ -29,7 +29,7 @@ export default class Utils {
       }
       document.querySelector('.greeting').textContent = `You logged as ${user.name}`;
       modal.classList.add('hidden');
-      return true;
+      return members;
     } catch (e) {
       throw e;
     }
@@ -43,11 +43,9 @@ export default class Utils {
 
   static async loginFormHandler(user, loginInput, sendInput, sendButton, modalLogin, members) {
     user.name = loginInput.value.trim();
-    sendInput.disabled = false;
-    sendButton.disabled = false;
     try {
-      await this.login(modalLogin, user, members);
-      return user.name;
+      members = await this.login(modalLogin, user, members);
+      return [user.name, members];
     } catch (e) {
       throw e;
     }
@@ -99,6 +97,17 @@ export default class Utils {
     chatItem.insertAdjacentElement('beforeend', chatItemDiv);
     chatArea.insertAdjacentElement('beforeend', chatItem);
     chatItem.scrollIntoView(false);
+  }
+
+  static renderUsers(onlineArea, member) {
+    const user = document.createElement('li');
+    user.setAttribute('class', 'online-member');
+    user.id = member;
+    const userDiv = document.createElement('div');
+    userDiv.setAttribute('class', 'online-member-name');
+    userDiv.textContent = member;
+    user.insertAdjacentElement('beforeend', userDiv);
+    onlineArea.insertAdjacentElement('beforeend', user);
   }
 
   static clear(items) {
