@@ -95,6 +95,13 @@ router.post(routes.deleteUsers, async (ctx) => {
   const { col } = ctx.state;
   try {
     const document = ctx.request.body;
+    if (!document.name) {
+      if (await col.findOne({})) {
+        await col.drop();
+        return { status: 'Removed all', data: '' };
+      }
+      return { status: 'Already all removed', data: '' };
+    }
     await col.deleteMany({ name: document.name });
     return { status: 'Removed', data: '' };
   } catch (e) {
