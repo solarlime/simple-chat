@@ -42,13 +42,7 @@ router.post('/', async (ctx) => {
   if (wsContext.isOpening()) {
     wsContext.accept();
 
-    // const publisher = serveGrip.getPublisher();
-    // // eslint-disable-next-line no-await-in-loop
-    // await publisher.publishFormats(CHANNEL_NAME,
-    //   new WebSocketMessageFormat(JSON.stringify(wsContext.id)));
-
     wsContext.subscribe(CHANNEL_NAME);
-    wsContext.send(JSON.stringify({ openId: wsContext.id }));
   }
 
   while (wsContext.canRecv()) {
@@ -57,21 +51,10 @@ router.post('/', async (ctx) => {
 
     if (message == null) {
       // If return value is undefined then connection is closed
-
       wsContext.close();
-      // await fetch('/api/http/mongo/fetch/users', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json;charset=utf-8',
-      //   },
-      //   body: JSON.stringify(userObject),
-      // });
       break;
     }
 
-    // Echo the message
-    // const publisher = serveGrip.getPublisher();
-    // eslint-disable-next-line no-await-in-loop
     await publisher.publishFormats(CHANNEL_NAME, new WebSocketMessageFormat(message));
   }
 
