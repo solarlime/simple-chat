@@ -38,6 +38,7 @@ export default class Page {
   /**
    * Обёртка для первого запуска WS: при повторных подключениях данные не должны очищаться
    * @param event
+   * @param reload
    */
   async loginWrapper(event, reload = false) {
     event.preventDefault();
@@ -118,7 +119,12 @@ export default class Page {
     /**
      * Обработчики для поля и кнопки. Отправляют данные для авторизации
      */
-    this.loginForm.addEventListener('submit', this.loginWrapper.bind(this));
+    this.loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!this.loginButton.disabled) {
+        this.loginWrapper.bind(this)(event);
+      }
+    });
     this.loginButton.addEventListener('click', this.loginWrapper.bind(this));
 
     /**
