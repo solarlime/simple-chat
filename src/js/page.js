@@ -87,7 +87,7 @@ export default class Page {
    */
   addMainListeners() {
     /**
-     * Обработчик ввода данных
+     * Обработчики ввода данных
      */
     this.loginInput.addEventListener('input', () => {
       // Отсекаем лишние пробелы
@@ -116,6 +116,17 @@ export default class Page {
       this.loginButton.disabled = false;
     });
 
+    this.sendInput.addEventListener('input', () => {
+      // Отсекаем лишние пробелы
+      const input = this.sendInput.value.trim();
+      // Проверяем на пустое поле
+      if (validator.isEmpty(input)) {
+        this.sendButton.disabled = true;
+        return;
+      }
+      this.sendButton.disabled = false;
+    });
+
     /**
      * Обработчики для поля и кнопки. Отправляют данные для авторизации
      */
@@ -130,7 +141,12 @@ export default class Page {
     /**
      * Обработчик отправки нового сообщения
      */
-    this.sendForm.addEventListener('submit', Utils.sendFormHandler.bind(this));
+    this.sendForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!this.sendButton.disabled) {
+        Utils.sendFormHandler.bind(this)(event);
+      }
+    });
   }
 
   /**
