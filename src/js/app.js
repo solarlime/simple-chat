@@ -9,6 +9,7 @@ export default class App {
       .addEventListener('click', () => window.location.reload());
 
     try {
+      // At first - fetch the users, who's already connected
       const members = await Utils.fetchUsers();
       console.log(members.data);
       const page = new Page(members.data);

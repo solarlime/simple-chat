@@ -4,7 +4,7 @@ import validator from 'validator/es';
 import Utils from './utils';
 
 export default class Page {
-  // Определяем ключевые элементы и переменные
+  // Define the key moments & variables
   constructor(members) {
     this.ws = null;
     this.page = document.body;
@@ -36,7 +36,7 @@ export default class Page {
   }
 
   /**
-   * Обёртка для первого запуска WS: при повторных подключениях данные не должны очищаться
+   * A wrapper for the first WS launch: data won't get cleared on reload
    * @param event
    * @param reload
    */
@@ -54,10 +54,10 @@ export default class Page {
       this.createWebSocket(reload);
 
       /**
-       * Обработчик закрытия страницы
+       * A listener for closing a page
        */
       window.addEventListener('beforeunload', () => {
-        // Посылаем всем сообщение о разъединении
+        // Send a broadcast message about closing the tab
         this.ws.send(JSON.stringify({
           isMessage: false, connect: false, name: this.whoAmI,
         }));
@@ -83,31 +83,31 @@ export default class Page {
   }
 
   /**
-   * Функция добавления обработчиков (не WS)
+   * A function for non-WS listeners
    */
   addMainListeners() {
     /**
-     * Обработчики ввода данных
+     * Listeners for the data input
      */
     this.loginInput.addEventListener('input', () => {
-      // Отсекаем лишние пробелы
+      // Odd out the spaces
       const input = this.loginInput.value.trim();
-      // Проверяем на пустое поле
+      // Check for an empty input
       if (validator.isEmpty(input)) {
         Utils.showError(this.error, this.loginButton, 'Write your username');
         return;
       }
-      // Должны быть только буквы и цифры
+      // Must be only letters & numbers
       if (!validator.isAlphanumeric(input, 'ru-RU') && !validator.isAlphanumeric(input, 'en-US')) {
         Utils.showError(this.error, this.loginButton, 'Incorrect username: forbidden symbols');
         return;
       }
-      // Но должна быть хотя бы одна буква
+      // But there must be at least one letter
       if (validator.isNumeric(input)) {
         Utils.showError(this.error, this.loginButton, 'Incorrect username: no letters');
         return;
       }
-      // И такого пользователя не должно быть уже в базе
+      // No existing users!
       if (this.members.find((item) => item === input)) {
         Utils.showError(this.error, this.loginButton, 'This member is online');
         return;
@@ -117,9 +117,9 @@ export default class Page {
     });
 
     this.sendInput.addEventListener('input', () => {
-      // Отсекаем лишние пробелы
+      // Odd out the spaces
       const input = this.sendInput.value.trim();
-      // Проверяем на пустое поле
+      // Check for an empty input
       if (validator.isEmpty(input)) {
         this.sendButton.disabled = true;
         return;
@@ -128,7 +128,7 @@ export default class Page {
     });
 
     /**
-     * Обработчики для поля и кнопки. Отправляют данные для авторизации
+     * Listeners for login field & button. Send the auth data
      */
     this.loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -139,7 +139,7 @@ export default class Page {
     this.loginButton.addEventListener('click', this.loginWrapper.bind(this));
 
     /**
-     * Обработчик отправки нового сообщения
+     * A listener for sending a new message
      */
     this.sendForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -150,13 +150,13 @@ export default class Page {
   }
 
   /**
-   * Функция добавления обработчиков (WS)
-   * @param reload: отвечает за работу при переподключении
+   * A function for adding WS listeners
+   * @param reload: controls the behaviour on reloads
    */
   addWebsocketListeners(reload = false) {
     /**
-     * Обработчик подключения к WS.
-     * При успешном подключении посылает служебное сообщение о подключении
+     * A listener for connecting event
+     * Sends a services message about it (if it's successful)
      */
     this.ws.addEventListener('open', (event) => {
       console.log('Connected to proxy!', event);
@@ -166,27 +166,28 @@ export default class Page {
     });
 
     /**
-     * Обработчик получения сообщений
+     * A listener for receiving messages
      */
     this.ws.addEventListener('message', (event) => {
       console.log('Received:', event);
       const data = JSON.parse(event.data);
 
-      // Обрабатываем сообщения лишь если пользователь корректно подключён
+      // Check, if the user is connected correctly
       if (this.whoAmI && !data.openId) {
-        // Если это пользовательское сообщение, отрисовываем
+        // Standard message? Render it!
         if (data.isMessage) {
           Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
-          // Если это служебное сообщение + подключение не после перезагрузки, отрисовываем
+          // Service message + no reload? Render it! ('User connected/disconnected!')
         } else if (!reload) {
           Utils.renderService(this.chatArea, data, this.whoAmI, () => (data.connect ? '' : 'dis'));
-          // При этом если сообщение говорит о разъединении, удаляем информацию о пользователе
+          // Also if there's a disconnect, delete the data about the disconnected user
           if (!data.connect) {
             this.members.splice(this.members.indexOf(data.name), 1);
             const deleteUser = Array.from(this.page.querySelectorAll('.online-member'))
               .find((item) => item.id === data.name);
             Utils.clear([deleteUser]);
-          //  Иначе добавляем его, но проверяем: нет ли его уже из-за запроса к базе
+          //  Else (a connect) add him. BUT: check, if he doesn't exist in the base.
+          //  It can happen if 2 users try to connect at the same time
           } else if (this.whoAmI !== data.name && !this.members.includes(data.name)) {
             this.members.push(data.name);
             Utils.renderUsers(this.usersArea, data.name);
@@ -198,7 +199,7 @@ export default class Page {
     });
 
     /**
-     * Обработчик завершения соединения. Если это произошло не из-за закрытия, переподключаемся
+     * A listener for clsing connection. If there's a fault: reconnect
      */
     this.ws.addEventListener('close', async (event) => {
       console.log('Connection closed:', event);
@@ -211,22 +212,18 @@ export default class Page {
       this.createWebSocket.bind(this, true);
 
       const cws = this.createWebSocket.bind(this, true);
-      // const cws = this.loginWrapper.bind(this, event, true);
       const timeout = setTimeout(async () => {
         cws();
         const res = await Utils.fetchUsers();
         this.members = res.data;
         this.update(false);
         this.members.forEach((member) => Utils.renderUsers(this.usersArea, member));
-
-        const users = this.page.querySelectorAll('.online-member');
-        console.log(users.entries());
         clearTimeout(timeout);
       }, 5000);
     });
 
     /**
-     * Обработчик ошибок подключения к WS
+     * A listener for different errors in WS
      */
     this.ws.addEventListener('error', () => {
       console.log('error');
@@ -234,8 +231,8 @@ export default class Page {
   }
 
   /**
-   * Функция очистки столбцов с пользователями и сообщениями
-   * @param all: по умолчанию очищаем пользователей + сообщения. Иначе - только пользователей
+   * A function for clearing areas with users & messages
+   * @param all: clear all by default. If false - only users
    */
   update(all = true) {
     if (all) {
