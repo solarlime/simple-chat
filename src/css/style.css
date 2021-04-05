@@ -35,6 +35,7 @@ body {
 
 main {
     width: 80%;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -214,6 +215,10 @@ main {
     color: white;
 }
 
+#input:disabled {
+    cursor: not-allowed;
+}
+
 #input::placeholder {
     color: ghostwhite;
 }
@@ -221,7 +226,7 @@ main {
 #send {
     width: var(--button);
     margin-left: 5px;
-    background-color: #4BD0A0;
+    border: 0;
     font-family: var(--font);
     font-size: 0.9rem;
 }
@@ -254,6 +259,55 @@ main {
     padding: 20px 0;
     background: #25272a;
     border-radius: 10px;
+}
+
+.alert-wrapper {
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.alert {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-width: 100px;
+    max-width: 50%;
+    max-height: 30%;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+    color: black;
+    animation: show 0.3s linear forwards;
+}
+
+@keyframes show {
+    from {
+        max-height: 0;
+    }
+
+    to {
+        max-height: 30%;
+    }
+}
+
+.alert-text {
+    text-align: center;
+    overflow: hidden;
+}
+
+.alert-button-container {
+    min-width: 100px;
+    width: 50%;
+    max-width: 200px;
 }
 
 #login-form {
@@ -316,7 +370,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
-.continue {
+.continue, .reload {
     width: 100%;
     cursor: pointer;
 }

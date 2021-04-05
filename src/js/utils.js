@@ -3,6 +3,13 @@
 import id from 'uniqid';
 
 export default class Utils {
+  static async fetchUsers() {
+    const res = await fetch('/api/http/mongo/fetch/users', {
+      cache: 'no-cache',
+    });
+    return res.json();
+  }
+
   static async login(modal, user, members) {
     try {
       const res = await fetch('/api/http/mongo/update/users', {
@@ -22,7 +29,7 @@ export default class Utils {
       }
       document.querySelector('.greeting').textContent = `You logged as ${user.name}`;
       modal.classList.add('hidden');
-      return true;
+      return members;
     } catch (e) {
       throw e;
     }
@@ -36,11 +43,9 @@ export default class Utils {
 
   static async loginFormHandler(user, loginInput, sendInput, sendButton, modalLogin, members) {
     user.name = loginInput.value.trim();
-    sendInput.disabled = false;
-    sendButton.disabled = false;
     try {
-      await this.login(modalLogin, user, members);
-      return user.name;
+      members = await this.login(modalLogin, user, members);
+      return [user.name, members];
     } catch (e) {
       throw e;
     }
@@ -94,7 +99,23 @@ export default class Utils {
     chatItem.scrollIntoView(false);
   }
 
+  static renderUsers(onlineArea, member) {
+    const user = document.createElement('li');
+    user.setAttribute('class', 'online-member');
+    user.id = member;
+    const userDiv = document.createElement('div');
+    userDiv.setAttribute('class', 'online-member-name');
+    userDiv.textContent = member;
+    user.insertAdjacentElement('beforeend', userDiv);
+    onlineArea.insertAdjacentElement('beforeend', user);
+  }
+
   static clear(items) {
     items.forEach((item) => item.remove());
+  }
+
+  static alert(text) {
+    document.querySelector('.alert-wrapper').classList.remove('hidden');
+    document.querySelector('.alert-text').textContent = text;
   }
 }
