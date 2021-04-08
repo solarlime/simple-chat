@@ -8,6 +8,16 @@ export default class App {
     document.querySelector('.reload')
       .addEventListener('click', () => window.location.reload());
 
+    /**
+     * A listener for resizing. Works good for mobiles
+     */
+    window.addEventListener('resize', () => {
+      console.log('resized');
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+    window.dispatchEvent(new Event('resize'));
+
     try {
       // At first - fetch the users, who's already connected
       const members = await Utils.fetchUsers();
