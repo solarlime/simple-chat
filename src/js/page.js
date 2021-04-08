@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import validator from 'validator/es';
+import MobileDetect from 'mobile-detect';
 import Utils from './utils';
 
 export default class Page {
@@ -27,6 +28,8 @@ export default class Page {
     this.loginInput.disabled = false;
     this.loginInput.focus();
     this.update();
+
+    this.detected = new MobileDetect(window.navigator.userAgent);
   }
 
   createWebSocket(reload = false) {
@@ -64,12 +67,16 @@ export default class Page {
         this.ws.close();
         const form = new FormData();
         form.append('name', this.whoAmI);
-        // Посылаем запрос на удаление пользователя из базы. Navigator.sendBeacon()
-        // плохо работает при закрытии браузера. Используем XMLHttpRequest
-        // в синхронном режиме для более надёжной работы
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/http/mongo/delete/users', false);
-        xhr.send(form);
+        if (!this.detected.mobile()) {
+          // Send a request to delete a user from the DB. XMLHttpRequest's more reliable
+          // on desktops but doesn't work on mobiles. Navigator.sendBeacon() works on closing
+          // tabs on mobiles. And nothing works for browser closing on mobiles. A bug!
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/http/mongo/delete/users', false);
+          xhr.send(form);
+        } else {
+          window.navigator.sendBeacon('/api/http/mongo/delete/users', form);
+        }
       });
 
       const res = await Utils.fetchUsers();
