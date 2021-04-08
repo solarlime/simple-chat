@@ -4,12 +4,23 @@ const koaBody = require('koa-body');
 const koaCors = require('@koa/cors');
 const { MongoClient } = require('mongodb');
 
+/**
+ * Make a serverless function with Koa
+ * @type {module.Application}
+ */
+
 const app = new Koa();
 const prefix = '/api/http';
 const router = new Router({ prefix });
 const url = process.env.MONGO_URL;
 const dbName = 'simple-chat';
 
+/**
+ * Define the routes for our convenience
+ * @returns {{mongo: string, fetchUsers: string, fetch: string,
+ *            updateMessages: string, update: string,
+ *            fetchMessages: string, deleteUsers: string, updateUsers: string}}
+ */
 function routesF() {
   const basis = {
     mongo: '/mongo',
@@ -24,15 +35,13 @@ function routesF() {
     fetch: basis.mongo + basis.fetch,
     update: basis.mongo + basis.update,
     fetchUsers: basis.mongo + basis.fetch + basis.users,
-    fetchMessages: basis.mongo + basis.fetch + basis.messages,
     updateUsers: basis.mongo + basis.update + basis.users,
-    updateMessages: basis.mongo + basis.update + basis.messages,
     deleteUsers: basis.mongo + basis.delete + basis.users,
   };
 }
 const routes = routesF(prefix);
 
-app.use(koaCors({ allowMethods: 'GET,PUT,POST,DELETE' }));
+app.use(koaCors({ allowMethods: 'GET,POST' }));
 app.use(koaBody({
   urlencoded: true,
   multipart: true,
@@ -40,6 +49,10 @@ app.use(koaBody({
   json: true,
 }));
 
+/**
+ * The main middleware. It's called it on each request, gives an access to our DB.
+ * Then calls next() due to the route
+ */
 app.use(async (ctx, next) => {
   // eslint-disable-next-line consistent-return
   async function run() {
@@ -49,8 +62,8 @@ app.use(async (ctx, next) => {
       console.log('Connected correctly to server');
       const db = client.db(dbName);
 
-      // Use the collection "items"
       const col = db.collection('names');
+      // Save col in ctx.state for sending it to middlewares
       ctx.state.col = col;
       const res = await next();
       return res;
@@ -68,6 +81,11 @@ app.use(async (ctx, next) => {
   ctx.response.body = JSON.stringify(result);
 });
 
+/**
+ * Service function. Returns an array of users
+ * @param col
+ * @returns {Promise<*>}
+ */
 async function getUsers(col) {
   const data = await col.find().toArray();
   return data.map((item) => {
@@ -76,6 +94,9 @@ async function getUsers(col) {
   });
 }
 
+/**
+ * Middleware to add a new user (if doesn't exist)
+ */
 router.post(routes.updateUsers, async (ctx) => {
   const { col } = ctx.state;
   try {
@@ -91,6 +112,10 @@ router.post(routes.updateUsers, async (ctx) => {
   }
 });
 
+/**
+ * Middleware to delete a user. It's also possible to drop the whole DB.
+ * Use it only to fix the errors!
+ */
 router.post(routes.deleteUsers, async (ctx) => {
   const { col } = ctx.state;
   try {
@@ -109,6 +134,9 @@ router.post(routes.deleteUsers, async (ctx) => {
   }
 });
 
+/**
+ * Middleware to return users. A wrapper for getUsers
+ */
 router.get(routes.fetchUsers, async (ctx) => {
   const { col } = ctx.state;
   return {

@@ -7,6 +7,11 @@ const koaCors = require('@koa/cors');
 const { ServeGrip } = require('@fanoutio/serve-grip');
 const { WebSocketMessageFormat } = require('@fanoutio/grip');
 
+/**
+ * Creating WebSocket-over-HTTPS with Fanout Cloud & GRIP
+ * @type {string}
+ */
+
 const CHANNEL_NAME = 'simple-chat';
 const app = new Koa();
 const router = new Router({ prefix: '/api/ws' });
@@ -29,7 +34,7 @@ app.use(koaBody({
 }));
 app.use(serveGrip.koa);
 
-// Websocket-over-HTTP is translated to HTTP POST
+// WebSocket-over-HTTP is translated to HTTP POST
 router.post('/', async (ctx) => {
   const { wsContext } = ctx.req.grip;
   if (wsContext == null) {

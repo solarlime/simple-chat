@@ -3,6 +3,10 @@
 import id from 'uniqid';
 
 export default class Utils {
+  /**
+   * A simple function for fetching users from the DB
+   * @returns {Promise<any>}
+   */
   static async fetchUsers() {
     const res = await fetch('/api/http/mongo/fetch/users', {
       cache: 'no-cache',
@@ -10,6 +14,13 @@ export default class Utils {
     return res.json();
   }
 
+  /**
+   * A function for signing in
+   * @param modal - a login window
+   * @param user - a user to sign in
+   * @param members - an array of members (each of them are objects with fields - can be expanded)
+   * @returns {Promise<*>}
+   */
   static async login(modal, user, members) {
     try {
       const res = await fetch('/api/http/mongo/update/users', {
@@ -35,12 +46,28 @@ export default class Utils {
     }
   }
 
+  /**
+   * A simple function to show errors on the login screen
+   * @param error - an error field
+   * @param loginButton
+   * @param text - an error text
+   */
   static showError(error, loginButton, text) {
     error.textContent = text;
     error.classList.remove('hidden');
     loginButton.disabled = true;
   }
 
+  /**
+   * A wrapper for a login() function
+   * @param user
+   * @param loginInput
+   * @param sendInput
+   * @param sendButton
+   * @param modalLogin
+   * @param members
+   * @returns {Promise<*[]>}
+   */
   static async loginFormHandler(user, loginInput, sendInput, sendButton, modalLogin, members) {
     user.name = loginInput.value.trim();
     try {
@@ -51,10 +78,15 @@ export default class Utils {
     }
   }
 
+  /**
+   * A function to send standard messages
+   * @param event
+   */
   static sendFormHandler(event) {
     event.preventDefault();
     console.log(this);
     const input = this.sendInput.value.trim();
+    // Define the date
     const resolveDate = (() => {
       const now = new Date();
       const options = {
@@ -75,6 +107,12 @@ export default class Utils {
     this.sendForm.reset();
   }
 
+  /**
+   * A function to render standard messages
+   * @param chatArea
+   * @param data
+   * @param callback - a simple function that defines the side to render
+   */
   static render(chatArea, data, callback) {
     const side = callback();
     const chatItem = document.createElement('li');
@@ -87,6 +125,13 @@ export default class Utils {
     chatItem.scrollIntoView(false);
   }
 
+  /**
+   * A function to render service messages
+   * @param chatArea
+   * @param data - an object with some service data
+   * @param whoAmI
+   * @param callback - a simple function that defines if the user connected/disconnected
+   */
   static renderService(chatArea, data, whoAmI, callback) {
     const connected = callback();
     const chatItem = document.createElement('li');
@@ -99,6 +144,11 @@ export default class Utils {
     chatItem.scrollIntoView(false);
   }
 
+  /**
+   * A function to render users, who are online
+   * @param onlineArea
+   * @param member
+   */
   static renderUsers(onlineArea, member) {
     const user = document.createElement('li');
     user.setAttribute('class', 'online-member');
@@ -110,10 +160,18 @@ export default class Utils {
     onlineArea.insertAdjacentElement('beforeend', user);
   }
 
+  /**
+   * Just a wrapper for a forEach
+   * @param items
+   */
   static clear(items) {
     items.forEach((item) => item.remove());
   }
 
+  /**
+   * A function for showing an alert
+   * @param text
+   */
   static alert(text) {
     document.querySelector('.alert-wrapper').classList.remove('hidden');
     document.querySelector('.alert-text').textContent = text;

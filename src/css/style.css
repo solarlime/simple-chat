@@ -5,6 +5,7 @@
     --font: "Inter", Arial, sans-serif;
     --button: 100px;
     --form-height: 35px;
+    --height: calc(var(--vh, 1vh) * 100);
 }
 
 html {
@@ -15,6 +16,8 @@ html {
 
 body {
     min-width: 320px;
+    height: 100vh;
+    height: var(--height);
     margin: 0;
     box-sizing: border-box;
     background-color: #25272a;
@@ -64,6 +67,7 @@ main {
     display: flex;
     width: 100%;
     height: calc(100vh - var(--header) - 30px);
+    height: calc(var(--height) - var(--header) - 30px);
     padding-bottom: 30px;
     box-sizing: border-box;
 }
@@ -400,6 +404,7 @@ button:disabled {
 
     .container {
         position: relative;
+        padding-bottom: 20px;
     }
 
     #menu-button-label {
