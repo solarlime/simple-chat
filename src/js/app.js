@@ -12,7 +12,6 @@ export default class App {
      * A listener for resizing. Works good for mobiles
      */
     window.addEventListener('resize', () => {
-      console.log('resized');
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     });
@@ -22,6 +21,16 @@ export default class App {
       // At first - fetch the users, who's already connected
       const members = await Utils.fetchUsers();
       console.log(members.data);
+      const response = await fetch('/api/fanout');
+      const result = await response.json();
+      console.log(result);
+      if (result.error) {
+        throw Error(result.error);
+      }
+      if (result.state === 'unsubscribed') {
+        window.navigator.sendBeacon('/api/http/mongo/delete/users');
+        members.data = [];
+      }
       const page = new Page(members.data);
       page.addMainListeners();
     } catch (e) {
