@@ -206,7 +206,7 @@ export default class Page {
     });
 
     /**
-     * A listener for clsing connection. If there's a fault: reconnect
+     * A listener for closing connection. If there's a fault: reconnect
      */
     this.ws.addEventListener('close', async (event) => {
       console.log('Connection closed:', event);
