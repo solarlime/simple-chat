@@ -26,12 +26,15 @@ router.get('/', async (ctx) => {
       },
     });
     const resultArray = await response.json();
-    const result = resultArray.items.find((item) => item.channel === CHANNEL_NAME);
-    console.log(result);
-    if (result && result.state) {
-      ctx.response.body = { state: result.state };
+    if (!resultArray.items.length) {
+      ctx.response.body = { state: 'unsubscribed' };
     } else {
-      throw new Error('this channel isn\'t found!');
+      const result = resultArray.items.find((item) => item.channel === CHANNEL_NAME);
+      if (result && result.state) {
+        ctx.response.body = { state: result.state };
+      } else {
+        throw new Error('this channel isn\'t found!');
+      }
     }
   } catch (e) {
     ctx.response.body = { error: e.message };
