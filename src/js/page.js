@@ -32,10 +32,39 @@ export default class Page {
     this.detected = new MobileDetect(window.navigator.userAgent);
   }
 
+  /**
+   * A wrapper for creating a WS connection
+   * @param reload
+   */
   createWebSocket(reload = false) {
     this.ws = new WebSocket('wss://8bcbc7a2.fanoutcdn.com/api/ws');
     this.ws.binaryType = 'blob';
     this.addWebsocketListeners(reload);
+  }
+
+  /**
+   * A function for closing a page
+   */
+  onPageClose(name) {
+    // Send a broadcast message about closing the tab
+    this.ws.send(JSON.stringify({
+      isMessage: false, connect: false, name,
+    }));
+    if (name === this.whoAmI) {
+      this.ws.close();
+    }
+    const form = new FormData();
+    form.append('name', name);
+    if (!this.detected.mobile()) {
+      // Send a request to delete a user from the DB. XMLHttpRequest's more reliable
+      // on desktops but doesn't work on mobiles. Navigator.sendBeacon() works on closing
+      // tabs on mobiles. And nothing works for browser closing on mobiles. A bug!
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/http/mongo/delete/users', false);
+      xhr.send(form);
+    } else {
+      window.navigator.sendBeacon('/api/http/mongo/delete/users', form);
+    }
   }
 
   /**
@@ -59,25 +88,7 @@ export default class Page {
       /**
        * A listener for closing a page
        */
-      window.addEventListener('beforeunload', () => {
-        // Send a broadcast message about closing the tab
-        this.ws.send(JSON.stringify({
-          isMessage: false, connect: false, name: this.whoAmI,
-        }));
-        this.ws.close();
-        const form = new FormData();
-        form.append('name', this.whoAmI);
-        if (!this.detected.mobile()) {
-          // Send a request to delete a user from the DB. XMLHttpRequest's more reliable
-          // on desktops but doesn't work on mobiles. Navigator.sendBeacon() works on closing
-          // tabs on mobiles. And nothing works for browser closing on mobiles. A bug!
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', '/api/http/mongo/delete/users', false);
-          xhr.send(form);
-        } else {
-          window.navigator.sendBeacon('/api/http/mongo/delete/users', form);
-        }
-      });
+      window.addEventListener('beforeunload', () => this.onPageClose(this.whoAmI));
 
       const res = await Utils.fetchUsers();
       this.members = res.data;
@@ -170,6 +181,8 @@ export default class Page {
       this.ws.send(JSON.stringify({
         isMessage: false, connect: true, name: this.whoAmI,
       }));
+      const dd = this.detectDisconnections.bind(this);
+      setInterval(dd, 60000);
     });
 
     /**
@@ -184,9 +197,22 @@ export default class Page {
         // Standard message? Render it!
         if (data.isMessage) {
           Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
-          // Service message + no reload? Render it! ('User connected/disconnected!')
-        } else if (!reload) {
+        // Service message: detectDisconnections.request
+        } else if (data.ddreq && data.req === this.whoAmI) {
+          this.ws.send(JSON.stringify({
+            isMessage: false, ddres: true, source: data.source, res: this.whoAmI,
+          }));
+        // Service message: detectDisconnections.response
+        } else if (data.ddres && data.source === this.whoAmI) {
+          console.log('Oh, it is me!');
+          clearTimeout(this.disconnectTimeout);
+        // Service message + no reload? Render it! ('User connected/disconnected!')
+        } else if (!reload && !data.ddres && !data.ddreq) {
           Utils.renderService(this.chatArea, data, this.whoAmI, () => (data.connect ? '' : 'dis'));
+          // This shouldn't happen, but...
+          if (data.name === this.whoAmI && !data.connect) {
+            Utils.alert('Something went wrong!');
+          }
           // Also if there's a disconnect, delete the data about the disconnected user
           if (!data.connect) {
             this.members.splice(this.members.indexOf(data.name), 1);
@@ -248,5 +274,18 @@ export default class Page {
     }
     const users = this.page.querySelectorAll('.online-member');
     if (users) Utils.clear(users);
+  }
+
+  detectDisconnections() {
+    if (this.members.length > 1) {
+      const index = this.members.indexOf(this.members.find((item) => item === this.whoAmI));
+      const nextIndex = (index !== this.members.length - 1) ? index + 1 : 0;
+      this.ws.send(JSON.stringify({
+        isMessage: false, ddreq: true, source: this.whoAmI, req: this.members[nextIndex],
+      }));
+      this.disconnectTimeout = setTimeout(() => {
+        this.onPageClose(this.members[nextIndex]);
+      }, 10000);
+    }
   }
 }
