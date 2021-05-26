@@ -1,10 +1,9 @@
 ![CI](https://github.com/solarlime/help-desk/workflows/CI/badge.svg?branch=master)
 
-# Help desk - Simple Ticket System
+# Simple Chat
 
 ### What:
 
-Based on [Items list](https://solarlime.github.io/items-list/).
-It's a simple help desk. Uses a serverless function for a server logic & MongoDB for storing data.
+It's a simple chat. Uses Fanout Cloud for WebSockets, MongoDB for storing data & serverless functions for some backend logic.
 
-Try it on [Vercel](https://help-desk.solarlime.dev/)!
+Try it on [Vercel](https://simple-chat.solarlime.dev/)!
