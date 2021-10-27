@@ -5,10 +5,11 @@ import id from 'uniqid';
 export default class Utils {
   /**
    * A simple function for fetching users from the DB
+   * @param serverHost - a host server
    * @returns {Promise<any>}
    */
-  static async fetchUsers() {
-    const res = await fetch('/api/http/mongo/fetch/users', {
+  static async fetchUsers(serverHost) {
+    const res = await fetch(`${serverHost}/simple-chat/fetch/`, {
       cache: 'no-cache',
     });
     return res.json();
@@ -16,31 +17,27 @@ export default class Utils {
 
   /**
    * A function for signing in
+   * @param serverHost - a host server
    * @param modal - a login window
    * @param user - a user to sign in
-   * @param members - an array of members (each of them are objects with fields - can be expanded)
    * @returns {Promise<*>}
    */
-  static async login(modal, user, members) {
+  static async login(serverHost, modal, user) {
     try {
-      const res = await fetch('/api/http/mongo/update/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify(user),
+      await new Promise((resolve, reject) => {
+        Utils.fetchUsers(serverHost).then((res) => {
+          if (res.status === 'Read') {
+            const doesExist = res.data.find((item) => item.name === user.name);
+            if (!doesExist) {
+              resolve({ status: 'Added', data: res.data });
+            } else {
+              reject(new Error(`User ${user.name}'s already added`));
+            }
+          }
+        });
       });
-      const json = await res.json();
-      console.log(json);
-      if (json.status === 'Added') {
-        members = json.data;
-        console.log(members);
-      } else {
-        throw new Error(json.data);
-      }
       document.querySelector('.greeting').textContent = `You logged as ${user.name}`;
       modal.classList.add('hidden');
-      return members;
     } catch (e) {
       throw e;
     }
@@ -60,19 +57,21 @@ export default class Utils {
 
   /**
    * A wrapper for a login() function
+   * @param serverHost
    * @param user
    * @param loginInput
    * @param sendInput
    * @param sendButton
    * @param modalLogin
-   * @param members
    * @returns {Promise<*[]>}
    */
-  static async loginFormHandler(user, loginInput, sendInput, sendButton, modalLogin, members) {
+  static async loginFormHandler(
+    serverHost, user, loginInput, sendInput, sendButton, modalLogin,
+  ) {
     user.name = loginInput.value.trim();
     try {
-      members = await this.login(modalLogin, user, members);
-      return [user.name, members];
+      await this.login(serverHost, modalLogin, user);
+      return user.name;
     } catch (e) {
       throw e;
     }
@@ -84,7 +83,6 @@ export default class Utils {
    */
   static sendFormHandler(event) {
     event.preventDefault();
-    console.log(this);
     const input = this.sendInput.value.trim();
     // Define the date
     const resolveDate = (() => {
@@ -101,7 +99,10 @@ export default class Utils {
     });
     if (this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({
-        isMessage: true, id: id(), name: this.whoAmI, date: resolveDate(), value: input,
+        isMessage: true,
+        data: {
+          id: id(), name: this.whoAmI, date: resolveDate(), value: input,
+        },
       }));
     }
     this.sendForm.reset();
@@ -110,16 +111,16 @@ export default class Utils {
   /**
    * A function to render standard messages
    * @param chatArea
-   * @param data
+   * @param body
    * @param callback - a simple function that defines the side to render
    */
-  static render(chatArea, data, callback) {
+  static render(chatArea, body, callback) {
     const side = callback();
     const chatItem = document.createElement('li');
     chatItem.setAttribute('class', 'chat-item-wrapper');
     chatItem.innerHTML = `<div class="chat-item chat-item-${side}"><div class="chat-item-text ${side}">\n`
-        + `<div class="chat-item-text-description">${data.value}</div>\n`
-        + `<div class="chat-item-text-extras">${data.name}, ${data.date}</div>\n`
+        + `<div class="chat-item-text-description">${body.data.value}</div>\n`
+        + `<div class="chat-item-text-extras">${body.data.name}, ${body.data.date}</div>\n`
         + '</div></div>';
     chatArea.insertAdjacentElement('beforeend', chatItem);
     chatItem.scrollIntoView(false);
@@ -128,17 +129,17 @@ export default class Utils {
   /**
    * A function to render service messages
    * @param chatArea
-   * @param data - an object with some service data
+   * @param body - an object with some service data
    * @param whoAmI
    * @param callback - a simple function that defines if the user connected/disconnected
    */
-  static renderService(chatArea, data, whoAmI, callback) {
+  static renderService(chatArea, body, whoAmI, callback) {
     const connected = callback();
     const chatItem = document.createElement('li');
     chatItem.setAttribute('class', 'chat-item-wrapper');
     const chatItemDiv = document.createElement('div');
     chatItemDiv.setAttribute('class', `chat-item chat-item-service ${connected}connect`);
-    chatItemDiv.textContent = `${data.name === whoAmI ? 'You' : data.name} ${connected}connected!`;
+    chatItemDiv.textContent = `${body.data.name === whoAmI ? 'You' : body.data.name} ${connected}connected!`;
     chatItem.insertAdjacentElement('beforeend', chatItemDiv);
     chatArea.insertAdjacentElement('beforeend', chatItem);
     chatItem.scrollIntoView(false);

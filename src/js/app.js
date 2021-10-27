@@ -17,21 +17,19 @@ export default class App {
     });
     window.dispatchEvent(new Event('resize'));
 
+    // It's necessary to recognise if the page is loaded locally or not to choose a server location
+    let serverHost;
+    const { hostname, protocol } = window.location;
+    if (hostname === 'localhost') {
+      serverHost = `${protocol}//${hostname}:3002`;
+    } else {
+      serverHost = `${protocol}//nginx.solarlime.dev`;
+    }
+
     try {
       // At first - fetch the users, who's already connected
-      const members = await Utils.fetchUsers();
-      console.log(members.data);
-      const response = await fetch('/api/fanout');
-      const result = await response.json();
-      console.log(result);
-      if (result.error) {
-        throw Error(result.error);
-      }
-      if (result.state === 'unsubscribed') {
-        window.navigator.sendBeacon('/api/http/mongo/delete/users');
-        members.data = [];
-      }
-      const page = new Page(members.data);
+      const members = await Utils.fetchUsers(serverHost);
+      const page = new Page(serverHost, members.data);
       page.addMainListeners();
     } catch (e) {
       Utils.alert('Oops! Something went wrong. Check your internet connection!');

@@ -6,7 +6,8 @@ import Utils from './utils';
 
 export default class Page {
   // Define the key moments & variables
-  constructor(members) {
+  constructor(serverHost, members) {
+    this.serverHost = serverHost;
     this.ws = null;
     this.page = document.body;
     this.chatArea = this.page.querySelector('ul.chat');
@@ -34,67 +35,30 @@ export default class Page {
 
   /**
    * A wrapper for creating a WS connection
-   * @param reload
    */
-  createWebSocket(reload = false) {
-    this.ws = new WebSocket('wss://8bcbc7a2.fanoutcdn.com/api/ws');
+  createWebSocket() {
+    this.ws = new WebSocket(`ws://${(() => {
+      const { hostname } = window.location;
+      return (hostname === 'localhost') ? `${hostname}:3002` : 'nginx.solarlime.dev';
+    })()}/simple-chat/connect/`);
     this.ws.binaryType = 'blob';
-    this.addWebsocketListeners(reload);
-  }
-
-  /**
-   * A function for closing a page
-   */
-  onPageClose(name) {
-    // Send a broadcast message about closing the tab
-    this.ws.send(JSON.stringify({
-      isMessage: false, connect: false, name,
-    }));
-    if (name === this.whoAmI) {
-      this.ws.close();
-    }
-    const form = new FormData();
-    form.append('name', name);
-    if (!this.detected.mobile()) {
-      // Send a request to delete a user from the DB. XMLHttpRequest's more reliable
-      // on desktops but doesn't work on mobiles. Navigator.sendBeacon() works on closing
-      // tabs on mobiles. And nothing works for browser closing on mobiles. A bug!
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/api/http/mongo/delete/users', false);
-      xhr.send(form);
-    } else {
-      window.navigator.sendBeacon('/api/http/mongo/delete/users', form);
-    }
+    this.addWebsocketListeners();
   }
 
   /**
    * A wrapper for the first WS launch: data won't get cleared on reload
    * @param event
-   * @param reload
    */
-  async loginWrapper(event, reload = false) {
+  async loginWrapper(event) {
     event.preventDefault();
     try {
-      console.log(this.loginButton);
       this.loginButton.disabled = true;
       this.loginInput.disabled = true;
-      [this.whoAmI, this.members] = await Utils.loginFormHandler(
-        { name: this.whoAmI }, this.loginInput, this.sendInput,
-        this.sendButton, this.modalLogin, this.members,
+      this.whoAmI = await Utils.loginFormHandler(
+        this.serverHost, { name: this.whoAmI }, this.loginInput, this.sendInput,
+        this.sendButton, this.modalLogin,
       );
-      console.log(this.members);
-      this.createWebSocket(reload);
-
-      /**
-       * A listener for closing a page
-       */
-      window.addEventListener('beforeunload', () => this.onPageClose(this.whoAmI));
-
-      const res = await Utils.fetchUsers();
-      this.members = res.data;
-      this.update(false);
-      this.members.forEach((member) => Utils.renderUsers(this.usersArea, member));
-      this.sendInput.focus();
+      this.createWebSocket();
     } catch (e) {
       Utils.alert(e);
     }
@@ -126,7 +90,7 @@ export default class Page {
         return;
       }
       // No existing users!
-      if (this.members.find((item) => item === input)) {
+      if (this.members.find((item) => item.name === input)) {
         Utils.showError(this.error, this.loginButton, 'This member is online');
         return;
       }
@@ -146,7 +110,7 @@ export default class Page {
     });
 
     /**
-     * Listeners for login field & button. Send the auth data
+     * Listeners for a login field & its button
      */
     this.loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -169,20 +133,27 @@ export default class Page {
 
   /**
    * A function for adding WS listeners
-   * @param reload: controls the behaviour on reloads
    */
-  addWebsocketListeners(reload = false) {
+  addWebsocketListeners() {
     /**
      * A listener for connecting event
      * Sends a services message about it (if it's successful)
      */
-    this.ws.addEventListener('open', (event) => {
+    this.ws.addEventListener('open', async (event) => {
       console.log('Connected to proxy!', event);
+      try {
+        const fetched = await Utils.fetchUsers(this.serverHost);
+        fetched.data.forEach((item) => {
+          if (item.name) Utils.renderUsers(this.usersArea, item.name);
+        });
+      } catch (e) {
+        Utils.alert('A problem with rendering users occurred');
+      }
       this.ws.send(JSON.stringify({
-        isMessage: false, connect: true, name: this.whoAmI,
+        isMessage: false,
+        data: { connect: true, name: this.whoAmI },
       }));
-      const dd = this.detectDisconnections.bind(this);
-      setInterval(dd, 60000);
+      this.sendInput.focus();
     });
 
     /**
@@ -190,41 +161,18 @@ export default class Page {
      */
     this.ws.addEventListener('message', (event) => {
       console.log('Received:', event);
-      const data = JSON.parse(event.data);
+      const body = JSON.parse(event.data);
 
-      // Check, if the user is connected correctly
-      if (this.whoAmI && !data.openId) {
-        // Standard message? Render it!
-        if (data.isMessage) {
-          Utils.render(this.chatArea, data, () => (data.name === this.whoAmI ? 'self' : 'others'));
-        // Service message: detectDisconnections.request
-        } else if (data.ddreq && data.req === this.whoAmI) {
-          this.ws.send(JSON.stringify({
-            isMessage: false, ddres: true, source: data.source, res: this.whoAmI,
-          }));
-        // Service message: detectDisconnections.response
-        } else if (data.ddres && data.source === this.whoAmI) {
-          console.log('Oh, it is me!');
-          clearTimeout(this.disconnectTimeout);
-        // Service message + no reload? Render it! ('User connected/disconnected!')
-        } else if (!reload && !data.ddres && !data.ddreq) {
-          Utils.renderService(this.chatArea, data, this.whoAmI, () => (data.connect ? '' : 'dis'));
-          // This shouldn't happen, but...
-          if (data.name === this.whoAmI && !data.connect) {
-            Utils.alert('Something went wrong!');
-          }
-          // Also if there's a disconnect, delete the data about the disconnected user
-          if (!data.connect) {
-            this.members.splice(this.members.indexOf(data.name), 1);
-            const deleteUser = Array.from(this.page.querySelectorAll('.online-member'))
-              .find((item) => item.id === data.name);
-            Utils.clear([deleteUser]);
-          //  Else (a connect) add him. BUT: check, if he doesn't exist in the base.
-          //  It can happen if 2 users try to connect at the same time
-          } else if (this.whoAmI !== data.name && !this.members.includes(data.name)) {
-            this.members.push(data.name);
-            Utils.renderUsers(this.usersArea, data.name);
-          }
+      if (body.isMessage) {
+        Utils.render(this.chatArea, body, () => (body.data.name === this.whoAmI ? 'self' : 'others'));
+      } else {
+        Utils.renderService(this.chatArea, body, this.whoAmI, () => (body.data.connect ? '' : 'dis'));
+        if (body.data.connect) {
+          Utils.renderUsers(this.usersArea, body.data.name);
+        } else {
+          const deleteUser = Array.from(this.page.querySelectorAll('.online-member'))
+            .find((item) => item.id === body.data.name);
+          Utils.clear([deleteUser]);
         }
       }
       this.sendButton.disabled = false;
@@ -240,19 +188,8 @@ export default class Page {
       this.sendButton.disabled = true;
       this.sendInput.disabled = true;
       this.ws = null;
-      this.update(false);
-
-      this.createWebSocket.bind(this, true);
-
-      const cws = this.createWebSocket.bind(this, true);
-      const timeout = setTimeout(async () => {
-        cws();
-        const res = await Utils.fetchUsers();
-        this.members = res.data;
-        this.update(false);
-        this.members.forEach((member) => Utils.renderUsers(this.usersArea, member));
-        clearTimeout(timeout);
-      }, 5000);
+      this.update();
+      Utils.alert('You disconnected. Connect again!');
     });
 
     /**
@@ -265,27 +202,11 @@ export default class Page {
 
   /**
    * A function for clearing areas with users & messages
-   * @param all: clear all by default. If false - only users
    */
-  update(all = true) {
-    if (all) {
-      const messages = this.page.querySelectorAll('.chat-item-wrapper');
-      if (messages) Utils.clear(messages);
-    }
+  update() {
+    const messages = this.page.querySelectorAll('.chat-item-wrapper');
+    if (messages) Utils.clear(messages);
     const users = this.page.querySelectorAll('.online-member');
     if (users) Utils.clear(users);
-  }
-
-  detectDisconnections() {
-    if (this.members.length > 1) {
-      const index = this.members.indexOf(this.members.find((item) => item === this.whoAmI));
-      const nextIndex = (index !== this.members.length - 1) ? index + 1 : 0;
-      this.ws.send(JSON.stringify({
-        isMessage: false, ddreq: true, source: this.whoAmI, req: this.members[nextIndex],
-      }));
-      this.disconnectTimeout = setTimeout(() => {
-        this.onPageClose(this.members[nextIndex]);
-      }, 10000);
-    }
   }
 }
