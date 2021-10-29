@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 
 import validator from 'validator/es';
-import MobileDetect from 'mobile-detect';
 import Utils from './utils';
 
 export default class Page {
@@ -25,21 +24,19 @@ export default class Page {
 
     this.whoAmI = undefined;
     this.members = members;
-    this.loginInput.placeholder = 'Enter the username';
+    this.loginInput.placeholder = 'Write your username';
     this.loginInput.disabled = false;
     this.loginInput.focus();
     this.update();
-
-    this.detected = new MobileDetect(window.navigator.userAgent);
   }
 
   /**
    * A wrapper for creating a WS connection
    */
   createWebSocket() {
-    this.ws = new WebSocket(`ws://${(() => {
+    this.ws = new WebSocket(`${(() => {
       const { hostname } = window.location;
-      return (hostname === 'localhost') ? `${hostname}:3002` : 'nginx.solarlime.dev';
+      return (hostname === 'localhost') ? `ws://${hostname}:3002` : 'wss://nginx.solarlime.dev';
     })()}/simple-chat/connect/`);
     this.ws.binaryType = 'blob';
     this.addWebsocketListeners();
@@ -137,7 +134,7 @@ export default class Page {
   addWebsocketListeners() {
     /**
      * A listener for connecting event
-     * Sends a services message about it (if it's successful)
+     * Sends a service message about it (if it's successful)
      */
     this.ws.addEventListener('open', async (event) => {
       console.log('Connected to proxy!', event);
@@ -153,14 +150,12 @@ export default class Page {
         isMessage: false,
         data: { connect: true, name: this.whoAmI },
       }));
-      this.sendInput.focus();
     });
 
     /**
      * A listener for receiving messages
      */
     this.ws.addEventListener('message', (event) => {
-      console.log('Received:', event);
       const body = JSON.parse(event.data);
 
       if (body.isMessage) {
@@ -175,8 +170,9 @@ export default class Page {
           Utils.clear([deleteUser]);
         }
       }
-      this.sendButton.disabled = false;
+      this.sendButton.disabled = true;
       this.sendInput.disabled = false;
+      this.sendInput.focus();
     });
 
     /**
@@ -195,8 +191,8 @@ export default class Page {
     /**
      * A listener for different errors in WS
      */
-    this.ws.addEventListener('error', () => {
-      console.log('error');
+    this.ws.addEventListener('error', (e) => {
+      console.log(e);
     });
   }
 
