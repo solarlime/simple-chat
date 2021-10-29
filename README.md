@@ -4,6 +4,6 @@
 
 ### What:
 
-It's a simple chat. Uses Fanout Cloud for WebSockets, MongoDB for storing data & serverless functions for some backend logic.
+It's a simple chat, based on Websockets. A server part is [here](https://github.com/solarlime/simple-chat-server).
 
 Try it on [Vercel](https://simple-chat.solarlime.dev/)!
