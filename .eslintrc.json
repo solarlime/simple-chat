@@ -15,12 +15,16 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "rules": {
     "no-restricted-syntax": [
       "error",
       "LabeledStatement",
       "WithStatement"
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": true }
     ]
   }
 }
