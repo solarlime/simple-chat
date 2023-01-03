@@ -171,6 +171,10 @@ main {
     flex-direction: column;
 }
 
+.chat-item-text-description {
+    word-break: break-word;
+}
+
 .chat-item-text-extras {
     margin-top: 5px;
     font-size: 0.8rem;

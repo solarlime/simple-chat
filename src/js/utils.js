@@ -65,9 +65,7 @@ export default class Utils {
    * @param modalLogin
    * @returns {Promise<*[]>}
    */
-  static async loginFormHandler(
-    serverHost, user, loginInput, sendInput, sendButton, modalLogin,
-  ) {
+  static async loginFormHandler(serverHost, user, loginInput, sendInput, sendButton, modalLogin) {
     user.name = loginInput.value.trim();
     try {
       await this.login(serverHost, modalLogin, user);

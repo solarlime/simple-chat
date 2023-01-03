@@ -52,8 +52,12 @@ export default class Page {
       this.loginButton.disabled = true;
       this.loginInput.disabled = true;
       this.whoAmI = await Utils.loginFormHandler(
-        this.serverHost, { name: this.whoAmI }, this.loginInput, this.sendInput,
-        this.sendButton, this.modalLogin,
+        this.serverHost,
+        { name: this.whoAmI },
+        this.loginInput,
+        this.sendInput,
+        this.sendButton,
+        this.modalLogin,
       );
       this.createWebSocket();
     } catch (e) {
