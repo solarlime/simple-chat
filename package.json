@@ -43,5 +43,6 @@
   "dependencies": {
     "uniqid": "^5.4.0",
     "validator": "^13.7.0"
-  }
+  },
+  "packageManager": "yarn@3.3.1"
 }
