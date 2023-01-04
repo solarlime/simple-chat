@@ -90,6 +90,11 @@ export default class Page {
         Utils.showError(this.error, this.loginButton, 'Incorrect username: no letters');
         return;
       }
+      // Up to 20 symbols
+      if (input.length > 20) {
+        Utils.showError(this.error, this.loginButton, 'Incorrect username: too long');
+        return;
+      }
       // No existing users!
       if (this.members.find((item) => item.name === input)) {
         Utils.showError(this.error, this.loginButton, 'This member is online');

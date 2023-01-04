@@ -10,10 +10,15 @@ export default class App {
 
     /**
      * A listener for resizing. Works good for mobiles
+     * A timeout is needed to deal with virtual keyboards.
+     * Otherwise, this event fires too quickly
      */
     window.addEventListener('resize', () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      const resizer = setTimeout(() => {
+        clearTimeout(resizer);
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }, 20);
     });
     window.dispatchEvent(new Event('resize'));
 
