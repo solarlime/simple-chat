@@ -116,11 +116,26 @@ export default class Utils {
     const side = callback();
     const chatItem = document.createElement('li');
     chatItem.setAttribute('class', 'chat-item-wrapper');
-    chatItem.innerHTML = `<div class="chat-item chat-item-${side}"><div class="chat-item-text ${side}">\n`
-        + `<div class="chat-item-text-description">${body.data.value}</div>\n`
-        + `<div class="chat-item-text-extras">${body.data.name}, ${body.data.date}</div>\n`
-        + '</div></div>';
-    chatArea.insertAdjacentElement('beforeend', chatItem);
+
+    const chatItemSide = document.createElement('div');
+    chatItemSide.setAttribute('class', `chat-item chat-item-${side}`);
+
+    const chatItemTextSide = document.createElement('div');
+    chatItemTextSide.setAttribute('class', `chat-item-text ${side}`);
+
+    const chatItemTextDescription = document.createElement('div');
+    chatItemTextDescription.setAttribute('class', 'chat-item-text-description');
+    chatItemTextDescription.textContent = `${body.data.value}`;
+
+    const chatItemTextExtras = document.createElement('div');
+    chatItemTextExtras.setAttribute('class', 'chat-item-text-extras');
+    chatItemTextExtras.textContent = `${body.data.name}, ${body.data.date}`;
+
+    chatItemTextSide.insertAdjacentElement('beforeend', chatItemTextDescription);
+    chatArea.insertAdjacentElement('beforeend', chatItem)
+      .insertAdjacentElement('beforeend', chatItemSide)
+      .insertAdjacentElement('beforeend', chatItemTextSide)
+      .insertAdjacentElement('beforeend', chatItemTextExtras);
     chatItem.scrollIntoView(false);
   }
 
