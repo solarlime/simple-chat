@@ -108,6 +108,11 @@ dist
 # WebStorm files
 .idea
 
+# Playwright files
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
 # Vercel files
 .vercel
 

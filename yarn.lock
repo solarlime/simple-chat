@@ -1514,15 +1514,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.29.1":
-  version: 1.29.1
-  resolution: "@playwright/test@npm:1.29.1"
+"@playwright/test@npm:^1.36.1":
+  version: 1.36.1
+  resolution: "@playwright/test@npm:1.36.1"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.29.1
+    fsevents: 2.3.2
+    playwright-core: 1.36.1
+  dependenciesMeta:
+    fsevents:
+      optional: true
   bin:
     playwright: cli.js
-  checksum: c4424ee09f6589a296a3a78402f8c9eac841f3e5f44d96e3a2ba07aaa00d53ee9c10cc96379b304743a9e70f231df0ded0ad2fc197f412ada67b4cf17ee24b0f
+  checksum: a0127e0dccc458e7feb1b5742c90f79db0b895288b135310d056be5e3c6bb2c47c4503d5b7a584db2b1ef518f87020dafa0016c198c98fd3df719d66cd2ab7b7
   languageName: node
   linkType: hard
 
@@ -3895,7 +3899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:~2.3.2":
+"fsevents@npm:2.3.2, fsevents@npm:~2.3.2":
   version: 2.3.2
   resolution: "fsevents@npm:2.3.2"
   dependencies:
@@ -3905,7 +3909,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
   resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
@@ -5823,12 +5827,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.29.1":
-  version: 1.29.1
-  resolution: "playwright-core@npm:1.29.1"
+"playwright-core@npm:1.36.1":
+  version: 1.36.1
+  resolution: "playwright-core@npm:1.36.1"
   bin:
-    playwright: cli.js
-  checksum: e1c8423db4d28f44e5365a353f321b04a07709c8bf26d0c908f06d2c2669f715315170f84ca98a532951c2ac6324f5f48f651dca1abe43092c7637bdb4703303
+    playwright-core: cli.js
+  checksum: bbde807294053b50f0dbbc81f0dacc43fe525830ce1526e6ca74012582dd1645eae2391719cfb020051abea90704057cfabcbfe45ca530b37becc491e9459790
   languageName: node
   linkType: hard
 
@@ -6801,7 +6805,7 @@ __metadata:
     "@babel/core": ^7.20.5
     "@babel/eslint-parser": ^7.19.1
     "@babel/preset-env": ^7.20.2
-    "@playwright/test": ^1.29.1
+    "@playwright/test": ^1.36.1
     babel-loader: ^9.1.0
     clean-webpack-plugin: ^4.0.0
     core-js: ^3.26.1
