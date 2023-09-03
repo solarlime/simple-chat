@@ -61,7 +61,7 @@ export default class Page {
       );
       this.createWebSocket();
     } catch (e) {
-      Utils.alert(e);
+      await Utils.alert(e);
     }
   }
 
@@ -153,7 +153,7 @@ export default class Page {
           if (item.name) Utils.renderUsers(this.usersArea, item.name);
         });
       } catch (e) {
-        Utils.alert('A problem with rendering users occurred');
+        await Utils.alert('A problem with rendering users occurred');
       }
       this.ws.send(JSON.stringify({
         isMessage: false,
@@ -194,7 +194,7 @@ export default class Page {
       this.sendInput.disabled = true;
       this.ws = null;
       this.update();
-      Utils.alert('You disconnected. Connect again!');
+      await Utils.alert('You disconnected. Connect again!');
     });
 
     /**

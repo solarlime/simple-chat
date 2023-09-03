@@ -5,9 +5,6 @@ import Utils from './utils';
 
 export default class App {
   static async init() {
-    document.querySelector('.reload')
-      .addEventListener('click', () => window.location.reload());
-
     /**
      * A listener for resizing. Works good for mobiles
      * A timeout is needed to deal with virtual keyboards.
@@ -37,7 +34,7 @@ export default class App {
       const page = new Page(serverHost, members.data);
       page.addMainListeners();
     } catch (e) {
-      Utils.alert('Oops! Something went wrong. Check your internet connection!');
+      await Utils.alert('Oops! Something went wrong. Check your internet connection!');
     }
   }
 }

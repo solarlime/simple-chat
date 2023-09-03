@@ -137,6 +137,24 @@ export default class Utils {
       .insertAdjacentElement('beforeend', chatItemTextSide)
       .insertAdjacentElement('beforeend', chatItemTextExtras);
     chatItem.scrollIntoView(false);
+
+    // Listeners for triggering copying logic
+    [{ down: 'mousedown', up: 'mouseup' }, { down: 'touchstart', up: 'touchend' }].forEach((events) => {
+      let copyTimeout;
+
+      chatItem.addEventListener(events.down, async (event) => {
+        event.preventDefault();
+        copyTimeout = setTimeout(async () => {
+          await Utils.alert('Do you want to copy the message?', true, body.data.value);
+          clearTimeout(copyTimeout);
+        }, 1000);
+      });
+
+      chatItem.addEventListener(events.up, async (event) => {
+        event.preventDefault();
+        clearTimeout(copyTimeout);
+      });
+    });
   }
 
   /**
@@ -183,11 +201,70 @@ export default class Utils {
   }
 
   /**
-   * A function for showing an alert
+   * A function for showing alerts or confirmations
    * @param text
+   * @param isConfirmation
+   * @param content - message to copy
    */
-  static alert(text) {
-    document.querySelector('.alert-wrapper').classList.remove('hidden');
-    document.querySelector('.alert-text').textContent = text;
+  static async alert(text, isConfirmation = false, content = undefined) {
+    const alertWrapper = document.querySelector('.alert-wrapper');
+    const alertText = document.querySelector('.alert-text');
+    const reloadContainer = document.querySelector('.alert-button-container');
+    const copyContainer = document.querySelector('.copy-button-container');
+    if (isConfirmation) {
+      if (!reloadContainer.classList.contains('hidden')) {
+        reloadContainer.classList.add('hidden');
+      }
+      if (copyContainer.classList.contains('hidden')) {
+        copyContainer.classList.remove('hidden');
+      }
+
+      const copy = document.querySelector('.copy');
+      const cancel = document.querySelector('.cancel');
+
+      const copyListener = async () => {
+        if (content !== undefined) {
+          if (typeof ClipboardItem && navigator.clipboard.write) {
+            // For Chrome & Safari
+            const type = 'text/plain';
+            const blob = new Blob([content], { type });
+            const item = new ClipboardItem({ [type]: blob });
+            await navigator.clipboard.write([item]);
+          } else {
+            // For Firefox
+            await navigator.clipboard.writeText(content);
+          }
+          const oldText = copy.textContent;
+          copy.textContent = '✓';
+          cancel.disabled = true;
+          const timeout = setTimeout(() => {
+            cancel.dispatchEvent(new Event('click'));
+            copy.textContent = oldText;
+            cancel.disabled = false;
+            clearTimeout(timeout);
+          }, 1000);
+        }
+      };
+
+      copy.addEventListener('click', copyListener, { once: true });
+
+      cancel.addEventListener('click', () => {
+        copy.removeEventListener('click', copyListener);
+        copyContainer.classList.add('hidden');
+        alertWrapper.classList.add('hidden');
+      }, { once: true });
+    } else {
+      if (reloadContainer.classList.contains('hidden')) {
+        reloadContainer.classList.remove('hidden');
+      }
+      if (!copyContainer.classList.contains('hidden')) {
+        copyContainer.classList.add('hidden');
+      }
+
+      const reload = document.querySelector('.reload');
+      reload.addEventListener('click', () => { window.location.reload(); }, { once: true });
+    }
+    alertWrapper.classList.remove('hidden');
+    alertText.textContent = text;
   }
 }
