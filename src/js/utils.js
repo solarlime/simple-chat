@@ -200,6 +200,22 @@ export default class Utils {
     items.forEach((item) => item.remove());
   }
 
+  static _copyFallback(content) {
+    const element = document.createElement('textarea');
+    element.value = content;
+    element.setAttribute('contenteditable', '');
+    element.setAttribute('readonly', '');
+    element.setAttribute('type', 'hidden');
+
+    document.body.appendChild(element);
+
+    element.select();
+    element.setSelectionRange(0, element.value.length);
+    document.execCommand('copy');
+
+    document.body.removeChild(element);
+  }
+
   /**
    * A function for showing alerts or confirmations
    * @param text
@@ -224,7 +240,10 @@ export default class Utils {
 
       const copyListener = async () => {
         if (content !== undefined) {
-          if (typeof ClipboardItem && navigator.clipboard.write) {
+          if (!navigator.clipboard) {
+            // Fallback (ex. Safari 12)
+            Utils._copyFallback(content);
+          } else if (typeof ClipboardItem && navigator.clipboard.write) {
             // For Chrome & Safari
             const type = 'text/plain';
             const blob = new Blob([content], { type });
