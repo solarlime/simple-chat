@@ -176,6 +176,19 @@ test.describe('E2E', () => {
       const newMessageTwo = await pageTwo.locator('div.others');
       await expect(newMessageTwo).toContainText(text);
 
+      // Let's try to open a copying popup...
+      await newMessageTwo.click({ delay: 2500 });
+      const popup = await pageTwo.locator('div.alert');
+      await expect(popup)
+        .toContainText('Do you want to copy the message?');
+
+      // ...close it
+      const cancel = await pageTwo.locator('button.cancel');
+      cancel.click();
+      await expect(popup).not.toBeVisible();
+
+      // For now, I don't test copying due to problems with access in different browsers
+
       await pageTwo.close();
       // User disconnection
       const disconnectionMessageOne = await pageOne.locator('div.disconnect');
