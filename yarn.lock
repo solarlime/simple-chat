@@ -23,14 +23,14 @@ __metadata:
   linkType: hard
 
 "@babel/cli@npm:^7.22.9":
-  version: 7.22.10
-  resolution: "@babel/cli@npm:7.22.10"
+  version: 7.23.4
+  resolution: "@babel/cli@npm:7.23.4"
   dependencies:
     "@jridgewell/trace-mapping": ^0.3.17
     "@nicolo-ribaudo/chokidar-2": 2.1.8-no-fsevents.3
     chokidar: ^3.4.0
     commander: ^4.0.1
-    convert-source-map: ^1.1.0
+    convert-source-map: ^2.0.0
     fs-readdir-recursive: ^1.1.0
     glob: ^7.2.0
     make-dir: ^2.1.0
@@ -45,7 +45,7 @@ __metadata:
   bin:
     babel: ./bin/babel.js
     babel-external-helpers: ./bin/babel-external-helpers.js
-  checksum: f6cbd237d62f196a3835f7eec07b3fea1a4ba3b7acf61616d6d22ce2c2653e29f869a254bf3de6d0fef65f577b3c9a6137aac89887679889ca9a56f0d2e07f18
+  checksum: 5a4f296cdf0b15a8578a860ad42675a358d888e11088c91ee5e510b48598d1dd88d83686d6fe6744c0a9cbcddfd34e79bc75ea425ced8ec9a2531e08c2655279
   languageName: node
   linkType: hard
 
@@ -2984,10 +2984,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"convert-source-map@npm:^1.1.0, convert-source-map@npm:^1.7.0":
+"convert-source-map@npm:^1.7.0":
   version: 1.9.0
   resolution: "convert-source-map@npm:1.9.0"
   checksum: dc55a1f28ddd0e9485ef13565f8f756b342f9a46c4ae18b843fe3c30c675d058d6a4823eff86d472f187b176f0adf51ea7b69ea38be34be4a63cbbf91b0593c8
+  languageName: node
+  linkType: hard
+
+"convert-source-map@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "convert-source-map@npm:2.0.0"
+  checksum: 63ae9933be5a2b8d4509daca5124e20c14d023c820258e484e32dc324d34c2754e71297c94a05784064ad27615037ef677e3f0c00469fb55f409d2bb21261035
   languageName: node
   linkType: hard
 
