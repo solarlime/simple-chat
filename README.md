@@ -1,4 +1,4 @@
-![CI](https://github.com/solarlime/help-desk/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/solarlime/simple-chat/actions/workflows/preview.yml/badge.svg?branch=preview)](https://github.com/solarlime/simple-chat/actions/workflows/preview.yml)
 
 # Simple Chat
 
