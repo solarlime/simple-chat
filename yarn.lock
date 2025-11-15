@@ -7209,7 +7209,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.5.3"
     mini-css-extract-plugin: "npm:^2.7.6"
     uniqid: "npm:^5.4.0"
-    validator: "npm:^13.9.0"
+    validator: "npm:^13.15.23"
     webpack: "npm:^5.94.0"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^5.2.2"
@@ -7927,10 +7927,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"validator@npm:^13.9.0":
-  version: 13.11.0
-  resolution: "validator@npm:13.11.0"
-  checksum: 10/4bf094641eb71729c06a42d669840e7189597ba655a8264adabac9bf03f95cd6fde5fbc894b0a13ee861bd4a852f56d2afdc9391aeaeb3fc0f9633a974140e12
+"validator@npm:^13.15.23":
+  version: 13.15.23
+  resolution: "validator@npm:13.15.23"
+  checksum: 10/03e4a37c04c4e8337b0c91e529bdb6376de6b52ef683616e2e909276be73903e6054203d274ed35e88e3498ec68764125b194338dd2ee893818d3008fbad1ba7
   languageName: node
   linkType: hard
 
